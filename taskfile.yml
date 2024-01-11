@@ -1,0 +1,21 @@
+# https://taskfile.dev
+
+version: '3'
+
+tasks:
+  run:
+    cmds:
+      - task build
+      - task serve
+
+  build:
+    cmd: go build -o ./dist/tinylink ./cmd/tinylink/.
+  
+  serve:
+    cmd: ./dist/tinylink
+
+  test:
+    cmd: go test -v ./...
+
+  tidy:
+    cmd: go mod tidy
