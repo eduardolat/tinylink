@@ -12,7 +12,9 @@ import (
 )
 
 func main() {
-	shortCodeGenerator := uuid.NewUUIDShortCodeGenerator()
+	shortCodeGenerator := uuid.NewUUIDShortCodeGenerator(uuid.NewUUIDShortCodeGeneratorOptions{
+		RemoveDashes: true,
+	})
 	dataStore := inmemory.NewInMemoryDataStore()
 	shortenerClient := shortener.NewClient(shortCodeGenerator, dataStore)
 
