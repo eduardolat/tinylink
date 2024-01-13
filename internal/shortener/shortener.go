@@ -1,22 +1,22 @@
 package shortener
 
 type Client struct {
-	dataStore          DataStore
-	shortCodeGenerator ShortCodeGenerator
+	dataStore DataStore
+	shortGen  ShortGen
 }
 
 func NewClient(
-	shortCodeGenerator ShortCodeGenerator,
+	shortGen ShortGen,
 	dataStore DataStore,
 ) *Client {
 	return &Client{
-		shortCodeGenerator: shortCodeGenerator,
-		dataStore:          dataStore,
+		shortGen:  shortGen,
+		dataStore: dataStore,
 	}
 }
 
 func (c *Client) ShortenURL(url string) (string, error) {
-	shortCode, err := c.shortCodeGenerator.Generate()
+	shortCode, err := c.shortGen.Generate()
 	if err != nil {
 		return "", err
 	}

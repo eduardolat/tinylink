@@ -5,16 +5,16 @@ import (
 
 	"github.com/eduardolat/tinylink/internal/api"
 	"github.com/eduardolat/tinylink/internal/datastores/inmemory"
-	"github.com/eduardolat/tinylink/internal/shortcodegenerators/nanoid"
 	"github.com/eduardolat/tinylink/internal/shortener"
+	"github.com/eduardolat/tinylink/internal/shortgens/nanoid"
 	"github.com/eduardolat/tinylink/internal/web"
 	"github.com/go-chi/chi/v5"
 )
 
 func main() {
-	shortCodeGenerator := nanoid.NewNanoIDShortCodeGenerator(nanoid.NewNanoIDShortCodeGeneratorOptions{})
+	shortGen := nanoid.NewShortGen()
 	dataStore := inmemory.NewInMemoryDataStore()
-	shortenerClient := shortener.NewClient(shortCodeGenerator, dataStore)
+	shortenerClient := shortener.NewClient(shortGen, dataStore)
 
 	appRouter := chi.NewRouter()
 	apiRouter := api.NewRouter(shortenerClient)

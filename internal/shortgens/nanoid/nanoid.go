@@ -34,16 +34,15 @@ const (
 	DefaultAlphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 )
 
-// NanoIDShortCodeGenerator is a short code generator that uses NANOIDs
+// ShortGen is a short code generator that uses NANOIDs
 // to generate the unique short codes
-type NanoIDShortCodeGenerator struct {
+type ShortGen struct {
 	alphabet string
 	length   int
 }
 
-// NewNanoIDShortCodeGeneratorOptions is a struct that contains the options
-// for the NewNANOIDShortCodeGenerator function
-type NewNanoIDShortCodeGeneratorOptions struct {
+// ShortGenOpts is a struct that contains the options for the short code generator
+type ShortGenOpts struct {
 	// Alphabet is a custom alphabet that will be used to generate
 	// the NanoID, the default value is used if the value is empty
 	Alphabet string
@@ -53,28 +52,32 @@ type NewNanoIDShortCodeGeneratorOptions struct {
 	Length int
 }
 
-// NewNanoIDShortCodeGenerator returns a new NANOIDShortCodeGenerator
-func NewNanoIDShortCodeGenerator(
-	options NewNanoIDShortCodeGeneratorOptions,
-) *NanoIDShortCodeGenerator {
-	cg := &NanoIDShortCodeGenerator{
-		alphabet: DefaultAlphabet,
-		length:   DefaultLength,
+// NewShortGen returns a new NanoID ShortGen.
+// Options are optional and the default values will be used if they are not provided.
+func NewShortGen(
+	options ...ShortGenOpts,
+) *ShortGen {
+	pickedOptions := ShortGenOpts{}
+	if len(options) > 0 {
+		pickedOptions = options[0]
 	}
 
-	if options.Alphabet != "" {
-		cg.alphabet = options.Alphabet
+	if pickedOptions.Alphabet == "" {
+		pickedOptions.Alphabet = DefaultAlphabet
 	}
 
-	if options.Length != 0 {
-		cg.length = options.Length
+	if pickedOptions.Length == 0 {
+		pickedOptions.Length = DefaultLength
 	}
 
-	return cg
+	return &ShortGen{
+		alphabet: pickedOptions.Alphabet,
+		length:   pickedOptions.Length,
+	}
 }
 
 // Generate generates a new unique short code for the URL shortener
-func (g *NanoIDShortCodeGenerator) Generate() (string, error) {
+func (g *ShortGen) Generate() (string, error) {
 	u, err := gonanoid.Generate(g.alphabet, g.length)
 	if err != nil {
 		return "", err
