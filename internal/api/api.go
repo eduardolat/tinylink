@@ -6,7 +6,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func NewRouter(shortener *shortener.Client) chi.Router {
+func NewRouter(shortener *shortener.Shortener) chi.Router {
 	v1Router := v1.NewRouter(shortener)
 
 	chiRouter := chi.NewRouter()

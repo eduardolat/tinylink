@@ -1,21 +1,21 @@
 package shortener
 
-type Client struct {
+type Shortener struct {
 	dataStore DataStore
 	shortGen  ShortGen
 }
 
-func NewClient(
-	shortGen ShortGen,
+func NewShortener(
 	dataStore DataStore,
-) *Client {
-	return &Client{
-		shortGen:  shortGen,
+	shortGen ShortGen,
+) *Shortener {
+	return &Shortener{
 		dataStore: dataStore,
+		shortGen:  shortGen,
 	}
 }
 
-func (c *Client) ShortenURL(url string) (string, error) {
+func (c *Shortener) ShortenURL(url string) (string, error) {
 	shortCode, err := c.shortGen.Generate()
 	if err != nil {
 		return "", err
@@ -37,7 +37,7 @@ func (c *Client) ShortenURL(url string) (string, error) {
 	return urlData.ShortCode, nil
 }
 
-func (c *Client) RetrieveURL(shortCode string) (string, error) {
+func (c *Shortener) RetrieveURL(shortCode string) (string, error) {
 	data, err := c.dataStore.RetrieveURL(shortCode)
 	if err != nil {
 		return "", err

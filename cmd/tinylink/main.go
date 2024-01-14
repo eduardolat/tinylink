@@ -14,7 +14,8 @@ import (
 func main() {
 	shortGen := nanoid.NewShortGen()
 	dataStore := inmemory.NewDataStore()
-	shortenerClient := shortener.NewClient(shortGen, dataStore)
+
+	shortenerClient := shortener.NewShortener(dataStore, shortGen)
 
 	appRouter := chi.NewRouter()
 	apiRouter := api.NewRouter(shortenerClient)

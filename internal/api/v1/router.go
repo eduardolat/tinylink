@@ -6,10 +6,10 @@ import (
 )
 
 type router struct {
-	shortener *shortener.Client
+	shortener *shortener.Shortener
 }
 
-func NewRouter(shortener *shortener.Client) chi.Router {
+func NewRouter(shortener *shortener.Shortener) chi.Router {
 	r := &router{
 		shortener: shortener,
 	}
