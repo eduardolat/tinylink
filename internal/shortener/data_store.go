@@ -138,13 +138,60 @@ type UpdateURLParams struct {
 // DataStore is the interface that will be implemented by all the
 // database adapters
 type DataStore interface {
+	// AutoMigrate will create or update the database schema.
+	//
+	// It should be called before the application starts.
+	//
+	// It should keep a record of the schema version in the database
+	// and run the necessary migrations to update the schema to the
+	// latest version without losing or corrupting data.
+	//
+	// Is the responsability of the adapter to avoid data loss or
+	// corruption when running migrations independently of the
+	// database engine and schema version.
+	AutoMigrate() error
+
+	// IsShortCodeAvailable checks if a given short code is available for use.
+	// Returns true if the short code is available, false otherwise.
+	IsShortCodeAvailable(shortCode string) (bool, error)
+
+	// IsURLAlreadyStored checks if a given URL is already stored in the database.
+	// Returns true if the URL is stored, false otherwise.
+	IsURLAlreadyStored(originalURL string) (bool, error)
+
+	// StoreURL stores a new URL with the given parameters.
+	// Returns the stored URL data.
 	StoreURL(params StoreURLParams) (URLData, error)
+
+	// RetrieveURL retrieves the URL data for a given short code.
+	// Returns the URL data.
 	RetrieveURL(shortCode string) (URLData, error)
+
+	// UpdateURL updates the URL data for a given short code with the given parameters.
+	// Returns the updated URL data.
 	UpdateURL(shortCode string, params UpdateURLParams) (URLData, error)
+
+	// DeleteURL deletes the URL data for a given short code.
+	// Returns an error if the deletion was unsuccessful.
 	DeleteURL(shortCode string) error
+
+	// IncrementClicks increments the click count for a given short code.
+	// Returns an error if the increment was unsuccessful.
 	IncrementClicks(shortCode string) error
+
+	// IncrementRedirects increments the redirect count for a given short code.
+	// Returns an error if the increment was unsuccessful.
 	IncrementRedirects(shortCode string) error
+
+	// GetURLsByTag retrieves all URL data for a given tag.
+	// Returns a slice of URL data.
 	GetURLsByTag(tag string) ([]URLData, error)
+
+	// GetActiveURLs retrieves all active URLs.
+	// Returns a slice of active URL data.
 	GetActiveURLs() ([]URLData, error)
+
+	// GetExpiredURLs retrieves all expired URLs.
+	// Returns a slice of expired URL data.
 	GetExpiredURLs() ([]URLData, error)
 }

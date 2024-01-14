@@ -19,6 +19,32 @@ func NewInMemoryDataStore() *InMemoryDataStore {
 	}
 }
 
+func (ds *InMemoryDataStore) AutoMigrate() error {
+	return nil
+}
+
+func (ds *InMemoryDataStore) IsShortCodeAvailable(shortCode string) (bool, error) {
+	ds.mu.RLock()
+	defer ds.mu.RUnlock()
+
+	_, exists := ds.data[shortCode]
+
+	return !exists, nil
+}
+
+func (ds *InMemoryDataStore) IsURLAlreadyStored(originalURL string) (bool, error) {
+	ds.mu.RLock()
+	defer ds.mu.RUnlock()
+
+	for _, data := range ds.data {
+		if data.OriginalURL == originalURL {
+			return true, nil
+		}
+	}
+
+	return false, nil
+}
+
 func (ds *InMemoryDataStore) StoreURL(params shortener.StoreURLParams) (shortener.URLData, error) {
 	ds.mu.Lock()
 	defer ds.mu.Unlock()
