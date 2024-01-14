@@ -8,22 +8,22 @@ import (
 	"github.com/eduardolat/tinylink/internal/shortener"
 )
 
-type InMemoryDataStore struct {
+type DataStore struct {
 	data map[string]shortener.URLData
 	mu   sync.RWMutex
 }
 
-func NewInMemoryDataStore() *InMemoryDataStore {
-	return &InMemoryDataStore{
+func NewDataStore() *DataStore {
+	return &DataStore{
 		data: make(map[string]shortener.URLData),
 	}
 }
 
-func (ds *InMemoryDataStore) AutoMigrate() error {
+func (ds *DataStore) AutoMigrate() error {
 	return nil
 }
 
-func (ds *InMemoryDataStore) IsShortCodeAvailable(shortCode string) (bool, error) {
+func (ds *DataStore) IsShortCodeAvailable(shortCode string) (bool, error) {
 	ds.mu.RLock()
 	defer ds.mu.RUnlock()
 
@@ -32,7 +32,7 @@ func (ds *InMemoryDataStore) IsShortCodeAvailable(shortCode string) (bool, error
 	return !exists, nil
 }
 
-func (ds *InMemoryDataStore) IsURLAlreadyStored(originalURL string) (bool, error) {
+func (ds *DataStore) IsURLAlreadyStored(originalURL string) (bool, error) {
 	ds.mu.RLock()
 	defer ds.mu.RUnlock()
 
@@ -45,7 +45,7 @@ func (ds *InMemoryDataStore) IsURLAlreadyStored(originalURL string) (bool, error
 	return false, nil
 }
 
-func (ds *InMemoryDataStore) StoreURL(params shortener.StoreURLParams) (shortener.URLData, error) {
+func (ds *DataStore) StoreURL(params shortener.StoreURLParams) (shortener.URLData, error) {
 	ds.mu.Lock()
 	defer ds.mu.Unlock()
 
@@ -69,7 +69,7 @@ func (ds *InMemoryDataStore) StoreURL(params shortener.StoreURLParams) (shortene
 	return data, nil
 }
 
-func (ds *InMemoryDataStore) RetrieveURL(shortCode string) (shortener.URLData, error) {
+func (ds *DataStore) RetrieveURL(shortCode string) (shortener.URLData, error) {
 	ds.mu.RLock()
 	defer ds.mu.RUnlock()
 
@@ -81,7 +81,7 @@ func (ds *InMemoryDataStore) RetrieveURL(shortCode string) (shortener.URLData, e
 	return data, nil
 }
 
-func (ds *InMemoryDataStore) UpdateURL(shortCode string, params shortener.UpdateURLParams) (shortener.URLData, error) {
+func (ds *DataStore) UpdateURL(shortCode string, params shortener.UpdateURLParams) (shortener.URLData, error) {
 	ds.mu.Lock()
 	defer ds.mu.Unlock()
 
@@ -103,7 +103,7 @@ func (ds *InMemoryDataStore) UpdateURL(shortCode string, params shortener.Update
 	return data, nil
 }
 
-func (ds *InMemoryDataStore) DeleteURL(shortCode string) error {
+func (ds *DataStore) DeleteURL(shortCode string) error {
 	ds.mu.Lock()
 	defer ds.mu.Unlock()
 
@@ -117,7 +117,7 @@ func (ds *InMemoryDataStore) DeleteURL(shortCode string) error {
 	return nil
 }
 
-func (ds *InMemoryDataStore) IncrementClicks(shortCode string) error {
+func (ds *DataStore) IncrementClicks(shortCode string) error {
 	ds.mu.Lock()
 	defer ds.mu.Unlock()
 
@@ -134,7 +134,7 @@ func (ds *InMemoryDataStore) IncrementClicks(shortCode string) error {
 	return nil
 }
 
-func (ds *InMemoryDataStore) IncrementRedirects(shortCode string) error {
+func (ds *DataStore) IncrementRedirects(shortCode string) error {
 	ds.mu.Lock()
 	defer ds.mu.Unlock()
 
@@ -151,7 +151,7 @@ func (ds *InMemoryDataStore) IncrementRedirects(shortCode string) error {
 	return nil
 }
 
-func (ds *InMemoryDataStore) GetURLsByTag(tag string) ([]shortener.URLData, error) {
+func (ds *DataStore) GetURLsByTag(tag string) ([]shortener.URLData, error) {
 	ds.mu.RLock()
 	defer ds.mu.RUnlock()
 
@@ -169,7 +169,7 @@ func (ds *InMemoryDataStore) GetURLsByTag(tag string) ([]shortener.URLData, erro
 	return urls, nil
 }
 
-func (ds *InMemoryDataStore) GetActiveURLs() ([]shortener.URLData, error) {
+func (ds *DataStore) GetActiveURLs() ([]shortener.URLData, error) {
 	ds.mu.RLock()
 	defer ds.mu.RUnlock()
 
@@ -184,7 +184,7 @@ func (ds *InMemoryDataStore) GetActiveURLs() ([]shortener.URLData, error) {
 	return urls, nil
 }
 
-func (ds *InMemoryDataStore) GetExpiredURLs() ([]shortener.URLData, error) {
+func (ds *DataStore) GetExpiredURLs() ([]shortener.URLData, error) {
 	ds.mu.RLock()
 	defer ds.mu.RUnlock()
 
