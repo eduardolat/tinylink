@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/eduardolat/tinylink/internal/api"
+	"github.com/eduardolat/tinylink/internal/config"
 	"github.com/eduardolat/tinylink/internal/datastores/inmemory"
 	"github.com/eduardolat/tinylink/internal/logger"
 	"github.com/eduardolat/tinylink/internal/shortener"
@@ -14,6 +16,7 @@ import (
 
 func main() {
 	logger.Info("🏁 starting TinyLink")
+	env := config.GetEnv()
 
 	dataStore := inmemory.NewDataStore()
 	err := dataStore.AutoMigrate()
@@ -35,9 +38,9 @@ func main() {
 	appRouter.Mount("/api", apiRouter)
 	appRouter.Mount("/", webRouter)
 
-	port := ":8080"
+	port := fmt.Sprintf(":%d", env.PORT)
 	logger.Info("🚀 starting HTTP server", "port", port)
-	err = http.ListenAndServe(":8080", appRouter)
+	err = http.ListenAndServe(port, appRouter)
 	if err != nil {
 		logger.FatalError(
 			"failed to start HTTP server",
