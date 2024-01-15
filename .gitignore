@@ -1,6 +1,11 @@
 # Dist folder
 dist/
 
+# Environment variables
+.env
+.env.*
+!.env.example
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
