@@ -28,7 +28,7 @@ type Env struct {
 func GetEnv() *Env {
 	err := godotenv.Load()
 	if err == nil {
-		logger.Info("👉 Using .env file")
+		logger.Info("👉 using .env file")
 	}
 
 	env := &Env{
