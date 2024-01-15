@@ -13,6 +13,8 @@ import (
 )
 
 func main() {
+	logger.Info("🏁 starting TinyLink")
+
 	dataStore := inmemory.NewDataStore()
 	err := dataStore.AutoMigrate()
 	if err != nil {
@@ -33,5 +35,14 @@ func main() {
 	appRouter.Mount("/api", apiRouter)
 	appRouter.Mount("/", webRouter)
 
-	http.ListenAndServe(":8080", appRouter)
+	port := ":8080"
+	logger.Info("🚀 starting HTTP server", "port", port)
+	err = http.ListenAndServe(":8080", appRouter)
+	if err != nil {
+		logger.FatalError(
+			"failed to start HTTP server",
+			"error",
+			err,
+		)
+	}
 }
