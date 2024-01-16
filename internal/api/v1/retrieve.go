@@ -18,5 +18,5 @@ func (m *router) retrieve(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(url))
+	w.Write([]byte(url.OriginalURL))
 }

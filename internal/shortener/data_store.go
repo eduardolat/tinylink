@@ -74,6 +74,7 @@ type URLData struct {
 // in the database
 type StoreURLParams struct {
 	// ShortCode is the short code that will be used to retrieve the URL
+	// if not provided, the adapter will generate a new random one
 	ShortCode string
 
 	// OriginalURL is the URL that the user wants to shorten
@@ -135,6 +136,35 @@ type UpdateURLParams struct {
 	IsActive bool
 }
 
+// PaginateURLSParams is the data structure that will be used to paginate URLs
+type PaginateURLSParams struct {
+	// Page is the page number, defaults to 1
+	Page int
+	// Size is the page size, defaults to 10
+	Size int
+	// TagsFilter is a list of tags that the user can use to filter the URLs
+	TagsFilter []string
+}
+
+// PaginateURLSResponse is the data structure that will be returned when
+// paginating URLs
+type PaginateURLSResponse struct {
+	// PrevPage is the previous page number
+	PrevPage int
+	// NextPage is the next page number
+	NextPage int
+	// Page is the page number
+	Page int
+	// Size is the page size
+	Size int
+	// TotalPages is the total number of pages
+	TotalPages int
+	// TotalRecords is the total number of records
+	TotalRecords int
+	// Data is the slice of URLs for the current page
+	Data []URLData
+}
+
 // DataStore is the interface that will be implemented by all the
 // database adapters
 type DataStore interface {
@@ -163,9 +193,17 @@ type DataStore interface {
 	// Returns the stored URL data.
 	StoreURL(params StoreURLParams) (URLData, error)
 
+	// PaginateURLS retrieves a slice of URL data for a given page and page size.
+	// Returns a slice of URL data.
+	PaginateURLS(params PaginateURLSParams) ([]URLData, error)
+
 	// RetrieveURL retrieves the URL data for a given short code.
 	// Returns the URL data.
 	RetrieveURL(shortCode string) (URLData, error)
+
+	// RetrieveURLByOriginalUrl retrieves the URL data for a given original URL.
+	// Returns the URL data.
+	RetrieveURLByOriginalUrl(originalUrl string) (URLData, error)
 
 	// UpdateURL updates the URL data for a given short code with the given parameters.
 	// Returns the updated URL data.
@@ -182,16 +220,4 @@ type DataStore interface {
 	// IncrementRedirects increments the redirect count for a given short code.
 	// Returns an error if the increment was unsuccessful.
 	IncrementRedirects(shortCode string) error
-
-	// GetURLsByTag retrieves all URL data for a given tag.
-	// Returns a slice of URL data.
-	GetURLsByTag(tag string) ([]URLData, error)
-
-	// GetActiveURLs retrieves all active URLs.
-	// Returns a slice of active URL data.
-	GetActiveURLs() ([]URLData, error)
-
-	// GetExpiredURLs retrieves all expired URLs.
-	// Returns a slice of expired URL data.
-	GetExpiredURLs() ([]URLData, error)
 }

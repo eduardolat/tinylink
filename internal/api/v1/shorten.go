@@ -1,6 +1,10 @@
 package v1
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/eduardolat/tinylink/internal/shortener"
+)
 
 func (m *router) shorten(w http.ResponseWriter, r *http.Request) {
 	url := r.URL.Query().Get("url")
@@ -10,7 +14,9 @@ func (m *router) shorten(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	shortCode, err := m.shortener.ShortenURL(url)
+	shortCode, err := m.shortener.ShortenURL(shortener.StoreURLParams{
+		OriginalURL: url,
+	})
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))

@@ -2,6 +2,7 @@ package inmemory
 
 import (
 	"errors"
+	"sort"
 	"sync"
 	"time"
 
@@ -81,6 +82,19 @@ func (ds *DataStore) RetrieveURL(shortCode string) (shortener.URLData, error) {
 	return data, nil
 }
 
+func (ds *DataStore) RetrieveURLByOriginalUrl(originalUrl string) (shortener.URLData, error) {
+	ds.mu.RLock()
+	defer ds.mu.RUnlock()
+
+	for _, data := range ds.data {
+		if data.OriginalURL == originalUrl {
+			return data, nil
+		}
+	}
+
+	return shortener.URLData{}, errors.New("URL not found")
+}
+
 func (ds *DataStore) UpdateURL(shortCode string, params shortener.UpdateURLParams) (shortener.URLData, error) {
 	ds.mu.Lock()
 	defer ds.mu.Unlock()
@@ -151,50 +165,47 @@ func (ds *DataStore) IncrementRedirects(shortCode string) error {
 	return nil
 }
 
-func (ds *DataStore) GetURLsByTag(tag string) ([]shortener.URLData, error) {
+func (ds *DataStore) PaginateURLS(params shortener.PaginateURLSParams) ([]shortener.URLData, error) {
 	ds.mu.RLock()
 	defer ds.mu.RUnlock()
 
-	var urls []shortener.URLData
-
+	allURLs := []shortener.URLData{}
 	for _, data := range ds.data {
-		for _, t := range data.Tags {
-			if t == tag {
-				urls = append(urls, data)
-				break
+		if len(params.TagsFilter) == 0 {
+			allURLs = append(allURLs, data)
+			continue
+		}
+
+		if containsTags(data.Tags, params.TagsFilter) {
+			allURLs = append(allURLs, data)
+		}
+	}
+
+	sort.SliceStable(allURLs, func(i, j int) bool {
+		return allURLs[i].CreatedAt.Before(allURLs[j].CreatedAt)
+	})
+
+	start := (params.Page - 1) * params.Size
+	if start > len(allURLs) {
+		return nil, errors.New("page number out of range")
+	}
+
+	end := start + params.Size
+	if end > len(allURLs) {
+		end = len(allURLs)
+	}
+
+	return allURLs[start:end], nil
+}
+
+func containsTags(urlTags []string, filterTags []string) bool {
+	for _, urlTag := range urlTags {
+		for _, filterTag := range filterTags {
+			if urlTag == filterTag {
+				return true
 			}
 		}
 	}
 
-	return urls, nil
-}
-
-func (ds *DataStore) GetActiveURLs() ([]shortener.URLData, error) {
-	ds.mu.RLock()
-	defer ds.mu.RUnlock()
-
-	var urls []shortener.URLData
-
-	for _, data := range ds.data {
-		if data.IsActive {
-			urls = append(urls, data)
-		}
-	}
-
-	return urls, nil
-}
-
-func (ds *DataStore) GetExpiredURLs() ([]shortener.URLData, error) {
-	ds.mu.RLock()
-	defer ds.mu.RUnlock()
-
-	var urls []shortener.URLData
-
-	for _, data := range ds.data {
-		if data.ExpiresAt.Valid && data.ExpiresAt.Time.Before(time.Now()) {
-			urls = append(urls, data)
-		}
-	}
-
-	return urls, nil
+	return false
 }

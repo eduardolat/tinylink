@@ -44,6 +44,11 @@ func TestInMemoryDataStore(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, storedData, retrievedData)
 
+	// Test RetrieveURLByOriginalURL
+	retrievedData, err = ds.RetrieveURLByOriginalUrl("http://example.com")
+	assert.NoError(t, err)
+	assert.Equal(t, storedData, retrievedData)
+
 	// Test UpdateURL
 	updateParams := shortener.UpdateURLParams{
 		IsActive:         false,
@@ -69,20 +74,16 @@ func TestInMemoryDataStore(t *testing.T) {
 	retrievedData, _ = ds.RetrieveURL("abc123")
 	assert.Equal(t, int64(1), retrievedData.Redirects.Int64)
 
-	// Test GetURLsByTag
-	urlsByTag, err := ds.GetURLsByTag("updated")
+	// Test PaginateURLS
+	paginationParams := shortener.PaginateURLSParams{
+		Page:       1,
+		Size:       10,
+		TagsFilter: []string{"updated"},
+	}
+	paginatedData, err := ds.PaginateURLS(paginationParams)
 	assert.NoError(t, err)
-	assert.Equal(t, len(urlsByTag), 1)
-
-	// Test GetActiveURLs
-	activeURLs, err := ds.GetActiveURLs()
-	assert.NoError(t, err)
-	assert.Equal(t, len(activeURLs), 0)
-
-	// Test GetExpiredURLs
-	expiredURLs, err := ds.GetExpiredURLs()
-	assert.NoError(t, err)
-	assert.Equal(t, len(expiredURLs), 0)
+	assert.Equal(t, 1, len(paginatedData))
+	// assert.Equal(t, storedData.OriginalURL, paginatedData[0].OriginalURL)
 
 	// Test DeleteURL
 	err = ds.DeleteURL("abc123")
