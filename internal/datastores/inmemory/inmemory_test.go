@@ -82,8 +82,8 @@ func TestInMemoryDataStore(t *testing.T) {
 	}
 	paginatedData, err := ds.PaginateURLS(paginationParams)
 	assert.NoError(t, err)
-	assert.Equal(t, 1, len(paginatedData))
-	// assert.Equal(t, storedData.OriginalURL, paginatedData[0].OriginalURL)
+	assert.Equal(t, 1, len(paginatedData.Items))
+	assert.Equal(t, storedData.OriginalURL, paginatedData.Items[0].OriginalURL)
 
 	// Test DeleteURL
 	err = ds.DeleteURL("abc123")

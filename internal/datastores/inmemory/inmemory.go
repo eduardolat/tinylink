@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/eduardolat/tinylink/internal/datastores"
 	"github.com/eduardolat/tinylink/internal/shortener"
 )
 
@@ -165,7 +166,7 @@ func (ds *DataStore) IncrementRedirects(shortCode string) error {
 	return nil
 }
 
-func (ds *DataStore) PaginateURLS(params shortener.PaginateURLSParams) ([]shortener.URLData, error) {
+func (ds *DataStore) PaginateURLS(params shortener.PaginateURLSParams) (shortener.PaginateURLSResponse, error) {
 	ds.mu.RLock()
 	defer ds.mu.RUnlock()
 
@@ -187,7 +188,7 @@ func (ds *DataStore) PaginateURLS(params shortener.PaginateURLSParams) ([]shorte
 
 	start := (params.Page - 1) * params.Size
 	if start > len(allURLs) {
-		return nil, errors.New("page number out of range")
+		return shortener.PaginateURLSResponse{}, errors.New("page number out of range")
 	}
 
 	end := start + params.Size
@@ -195,7 +196,16 @@ func (ds *DataStore) PaginateURLS(params shortener.PaginateURLSParams) ([]shorte
 		end = len(allURLs)
 	}
 
-	return allURLs[start:end], nil
+	totalItems := len(allURLs)
+	items := allURLs[start:end]
+	pagination := datastores.CreatePaginationResponse(
+		params.Page,
+		params.Size,
+		totalItems,
+		items,
+	)
+
+	return pagination, nil
 }
 
 func containsTags(urlTags []string, filterTags []string) bool {
