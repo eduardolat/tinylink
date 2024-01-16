@@ -159,10 +159,10 @@ type PaginateURLSResponse struct {
 	Size int
 	// TotalPages is the total number of pages
 	TotalPages int
-	// TotalRecords is the total number of records
-	TotalRecords int
-	// Data is the slice of URLs for the current page
-	Data []URLData
+	// TotalItems is the total number of records
+	TotalItems int
+	// Items is the slice of URLs for the current page
+	Items []URLData
 }
 
 // DataStore is the interface that will be implemented by all the
@@ -195,7 +195,7 @@ type DataStore interface {
 
 	// PaginateURLS retrieves a slice of URL data for a given page and page size.
 	// Returns a slice of URL data.
-	PaginateURLS(params PaginateURLSParams) ([]URLData, error)
+	PaginateURLS(params PaginateURLSParams) (PaginateURLSResponse, error)
 
 	// RetrieveURL retrieves the URL data for a given short code.
 	// Returns the URL data.

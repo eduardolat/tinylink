@@ -109,7 +109,9 @@ func (c *Shortener) ShortenURL(params StoreURLParams) (string, error) {
 
 // PaginateURLS is the function that will be used to paginate the URLs
 // that were previously shortened
-// func (c *Shortener) PaginateURLS(params PaginateURLSParams) ([]URLData, error) {}
+func (c *Shortener) PaginateURLS(params PaginateURLSParams) (PaginateURLSResponse, error) {
+	return c.dataStore.PaginateURLS(params)
+}
 
 // RetrieveURL is the function that will be used to retrieve a URL
 // that was previously shortened
@@ -124,8 +126,24 @@ func (c *Shortener) RetrieveURL(shortCode string) (URLData, error) {
 
 // UpdateURL is the function that will be used to update a URL
 // that was previously shortened
-// func (c *Shortener) UpdateURL(shortCode string, params UpdateURLParams) (URLData, error) {}
+func (c *Shortener) UpdateURL(shortCode string, params UpdateURLParams) (URLData, error) {
+	return c.dataStore.UpdateURL(shortCode, params)
+}
 
 // DeleteURL is the function that will be used to delete a URL
 // that was previously shortened
-// func (c *Shortener) DeleteURL(shortCode string) error {}
+func (c *Shortener) DeleteURL(shortCode string) error {
+	return c.dataStore.DeleteURL(shortCode)
+}
+
+// IncrementClicks is the function that will be used to increment the clicks
+// of a URL that was previously shortened
+func (c *Shortener) IncrementClicks(shortCode string) error {
+	return c.dataStore.IncrementClicks(shortCode)
+}
+
+// IncrementRedirects is the function that will be used to increment the redirects
+// of a URL that was previously shortened
+func (c *Shortener) IncrementRedirects(shortCode string) error {
+	return c.dataStore.IncrementRedirects(shortCode)
+}
