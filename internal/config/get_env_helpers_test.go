@@ -41,20 +41,10 @@ func TestGetEnvAsStringFunc(t *testing.T) {
 	value, err = getEnvAsStringFunc(getEnvAsStringParams{
 		name:         "TEST_ENV",
 		defaultValue: newDefaultValue("default_value"),
-		isRequired:   true,
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, "test_value", value)
 	os.Unsetenv("TEST_ENV")
-
-	// Test when environment variable is empty, default value is provided, and is not required
-	value, err = getEnvAsStringFunc(getEnvAsStringParams{
-		name:         "TEST_ENV",
-		defaultValue: newDefaultValue("default_value"),
-		isRequired:   false,
-	})
-	assert.NoError(t, err)
-	assert.Equal(t, "default_value", value)
 
 	// Test when environment variable exists, is not required, and no default value is provided
 	os.Setenv("TEST_ENV", "test_value")
@@ -73,6 +63,15 @@ func TestGetEnvAsStringFunc(t *testing.T) {
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, "", value)
+
+	// Test when default value and required are both present
+	// This should return an error
+	value, err = getEnvAsStringFunc(getEnvAsStringParams{
+		name:         "NON_EXISTENT_ENV",
+		defaultValue: newDefaultValue("default_value"),
+		isRequired:   true,
+	})
+	assert.Error(t, err)
 }
 
 func TestGetEnvAsIntFunc(t *testing.T) {
@@ -132,6 +131,15 @@ func TestGetEnvAsIntFunc(t *testing.T) {
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, 0, value)
+
+	// Test when default value and required are both present
+	// This should return an error
+	value, err = getEnvAsIntFunc(getEnvAsIntParams{
+		name:         "NON_EXISTENT_ENV",
+		defaultValue: newDefaultValue(1),
+		isRequired:   true,
+	})
+	assert.Error(t, err)
 }
 
 func TestGetEnvAsBoolFunc(t *testing.T) {
@@ -171,4 +179,13 @@ func TestGetEnvAsBoolFunc(t *testing.T) {
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, false, value)
+
+	// Test when default value and required are both present
+	// This should return an error
+	value, err = getEnvAsBoolFunc(getEnvAsBoolParams{
+		name:         "NON_EXISTENT_ENV",
+		defaultValue: newDefaultValue(true),
+		isRequired:   true,
+	})
+	assert.Error(t, err)
 }

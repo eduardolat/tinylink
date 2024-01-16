@@ -36,9 +36,13 @@ func getEnvAsString(params getEnvAsStringParams) string {
 
 // getEnvAsStringFunc is the outlying function for getEnvAsString.
 func getEnvAsStringFunc(params getEnvAsStringParams) (string, error) {
+	if params.defaultValue != nil && params.isRequired {
+		return "", errors.New("cannot have both a default value and be required")
+	}
+
 	value, exists := os.LookupEnv(params.name)
 
-	if !exists && params.isRequired && params.defaultValue == nil {
+	if !exists && params.isRequired {
 		return "", errors.New("required env variable does not exist")
 	}
 
@@ -75,6 +79,10 @@ func getEnvAsInt(params getEnvAsIntParams) int {
 
 // getEnvAsIntFunc is the outlying function for getEnvAsInt.
 func getEnvAsIntFunc(params getEnvAsIntParams) (int, error) {
+	if params.defaultValue != nil && params.isRequired {
+		return 0, errors.New("cannot have both a default value and be required")
+	}
+
 	valueStr, exists := os.LookupEnv(params.name)
 
 	if !exists && params.isRequired {
@@ -120,6 +128,10 @@ func getEnvAsBool(params getEnvAsBoolParams) bool {
 
 // getEnvAsBoolFunc is the outlying function for getEnvAsBool.
 func getEnvAsBoolFunc(params getEnvAsBoolParams) (bool, error) {
+	if params.defaultValue != nil && params.isRequired {
+		return false, errors.New("cannot have both a default value and be required")
+	}
+
 	valueStr, exists := os.LookupEnv(params.name)
 
 	if !exists && params.isRequired {
