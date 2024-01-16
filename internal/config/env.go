@@ -33,7 +33,7 @@ type Env struct {
 
 	// Postgres specific env variables
 	POSTGRES_HOST string
-	POSTGRES_PORT string
+	POSTGRES_PORT int
 	POSTGRES_USER string
 	POSTGRES_PASS string
 	POSTGRES_DB   string
@@ -47,6 +47,9 @@ type Env struct {
 	NANOID_ALPHABET string
 }
 
+// GetEnv returns the environment variables.
+//
+// If there is an error, it will log it and exit the program.
 func GetEnv() *Env {
 	err := godotenv.Load()
 	if err == nil {
@@ -87,7 +90,7 @@ func GetEnv() *Env {
 			name:       "POSTGRES_HOST",
 			isRequired: false,
 		}),
-		POSTGRES_PORT: getEnvAsString(getEnvAsStringParams{
+		POSTGRES_PORT: getEnvAsInt(getEnvAsIntParams{
 			name:       "POSTGRES_PORT",
 			isRequired: false,
 		}),
@@ -125,5 +128,6 @@ func GetEnv() *Env {
 		}),
 	}
 
+	validateEnv(env)
 	return env
 }
