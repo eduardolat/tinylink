@@ -149,7 +149,7 @@ func getEnvAsBoolFunc(params getEnvAsBoolParams) (*bool, error) {
 	value, err := strconv.ParseBool(valueStr)
 
 	if err != nil {
-		return nil, errors.New(`env variable is not a boolean, must be "true" or "false"`)
+		return nil, errors.New("env variable is not a boolean, must be true or false")
 	}
 
 	return &value, nil
