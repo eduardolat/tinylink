@@ -38,7 +38,7 @@ func main() {
 	appRouter.Mount("/api", apiRouter)
 	appRouter.Mount("/", webRouter)
 
-	port := fmt.Sprintf(":%d", env.PORT)
+	port := fmt.Sprintf(":%d", *env.PORT)
 	logger.Info("🚀 starting HTTP server", "port", port)
 	err = http.ListenAndServe(port, appRouter)
 	if err != nil {

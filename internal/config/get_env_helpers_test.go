@@ -15,7 +15,7 @@ func TestGetEnvAsStringFunc(t *testing.T) {
 		isRequired: true,
 	})
 	assert.NoError(t, err)
-	assert.Equal(t, "test_value", value)
+	assert.Equal(t, "test_value", *value)
 	os.Unsetenv("TEST_ENV")
 
 	// Test when environment variable does not exist, default value is provided, and is not required
@@ -25,7 +25,7 @@ func TestGetEnvAsStringFunc(t *testing.T) {
 		isRequired:   false,
 	})
 	assert.NoError(t, err)
-	assert.Equal(t, "default_value", value)
+	assert.Equal(t, "default_value", *value)
 
 	// Test when environment variable does not exist, no default value is provided, and is required
 	// This should return an error
@@ -34,7 +34,7 @@ func TestGetEnvAsStringFunc(t *testing.T) {
 		isRequired: true,
 	})
 	assert.Error(t, err)
-	assert.Equal(t, "", value)
+	assert.Nil(t, value)
 
 	// Test when environment variable exists, default value is provided, and is required
 	os.Setenv("TEST_ENV", "test_value")
@@ -43,7 +43,7 @@ func TestGetEnvAsStringFunc(t *testing.T) {
 		defaultValue: newDefaultValue("default_value"),
 	})
 	assert.NoError(t, err)
-	assert.Equal(t, "test_value", value)
+	assert.Equal(t, "test_value", *value)
 	os.Unsetenv("TEST_ENV")
 
 	// Test when environment variable exists, is not required, and no default value is provided
@@ -53,7 +53,7 @@ func TestGetEnvAsStringFunc(t *testing.T) {
 		isRequired: false,
 	})
 	assert.NoError(t, err)
-	assert.Equal(t, "test_value", value)
+	assert.Equal(t, "test_value", *value)
 	os.Unsetenv("TEST_ENV")
 
 	// Test when environment variable does not exist, is not required, and no default value is provided
@@ -62,7 +62,7 @@ func TestGetEnvAsStringFunc(t *testing.T) {
 		isRequired: false,
 	})
 	assert.NoError(t, err)
-	assert.Equal(t, "", value)
+	assert.Nil(t, value)
 
 	// Test when default value and required are both present
 	// This should return an error
@@ -82,17 +82,16 @@ func TestGetEnvAsIntFunc(t *testing.T) {
 		isRequired: true,
 	})
 	assert.NoError(t, err)
-	assert.Equal(t, 123, value)
+	assert.Equal(t, 123, *value)
 	os.Unsetenv("TEST_ENV")
 
 	// Test when environment variable does not exist, default value is provided, and is not required
 	value, err = getEnvAsIntFunc(getEnvAsIntParams{
 		name:         "NON_EXISTENT_ENV",
 		defaultValue: newDefaultValue(456),
-		isRequired:   false,
 	})
 	assert.NoError(t, err)
-	assert.Equal(t, 456, value)
+	assert.Equal(t, 456, *value)
 
 	// Test when environment variable does not exist, no default value is provided, and is required
 	// This should return an error
@@ -101,7 +100,7 @@ func TestGetEnvAsIntFunc(t *testing.T) {
 		isRequired: true,
 	})
 	assert.Error(t, err)
-	assert.Equal(t, 0, value)
+	assert.Nil(t, value)
 
 	// Test when environment variable exists, is not an integer, no default value is provided, and is required
 	// This should return an error
@@ -111,7 +110,7 @@ func TestGetEnvAsIntFunc(t *testing.T) {
 		isRequired: true,
 	})
 	assert.Error(t, err)
-	assert.Equal(t, 0, value)
+	assert.Nil(t, value)
 	os.Unsetenv("TEST_ENV")
 
 	// Test when environment variable exists, is not required, and no default value is provided
@@ -121,7 +120,7 @@ func TestGetEnvAsIntFunc(t *testing.T) {
 		isRequired: false,
 	})
 	assert.NoError(t, err)
-	assert.Equal(t, 123, value)
+	assert.Equal(t, 123, *value)
 	os.Unsetenv("TEST_ENV")
 
 	// Test when environment variable does not exist, is not required, and no default value is provided
@@ -130,7 +129,7 @@ func TestGetEnvAsIntFunc(t *testing.T) {
 		isRequired: false,
 	})
 	assert.NoError(t, err)
-	assert.Equal(t, 0, value)
+	assert.Nil(t, value)
 
 	// Test when default value and required are both present
 	// This should return an error
@@ -150,7 +149,7 @@ func TestGetEnvAsBoolFunc(t *testing.T) {
 		isRequired: true,
 	})
 	assert.NoError(t, err)
-	assert.Equal(t, true, value)
+	assert.Equal(t, true, *value)
 	os.Unsetenv("TEST_ENV")
 
 	// Test when environment variable exists, is not a boolean, and is required
@@ -169,7 +168,7 @@ func TestGetEnvAsBoolFunc(t *testing.T) {
 		isRequired: false,
 	})
 	assert.NoError(t, err)
-	assert.Equal(t, true, value)
+	assert.Equal(t, true, *value)
 	os.Unsetenv("TEST_ENV")
 
 	// Test when environment variable does not exist, is not required, and no default value is provided
@@ -178,7 +177,7 @@ func TestGetEnvAsBoolFunc(t *testing.T) {
 		isRequired: false,
 	})
 	assert.NoError(t, err)
-	assert.Equal(t, false, value)
+	assert.Equal(t, false, *value)
 
 	// Test when default value and required are both present
 	// This should return an error

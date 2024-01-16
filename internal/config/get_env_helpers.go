@@ -20,7 +20,7 @@ func newDefaultValue[T any](value T) *T {
 }
 
 // getEnvAsString returns the value of the environment variable with the given name.
-func getEnvAsString(params getEnvAsStringParams) string {
+func getEnvAsString(params getEnvAsStringParams) *string {
 	value, err := getEnvAsStringFunc(params)
 
 	if err != nil {
@@ -35,25 +35,25 @@ func getEnvAsString(params getEnvAsStringParams) string {
 }
 
 // getEnvAsStringFunc is the outlying function for getEnvAsString.
-func getEnvAsStringFunc(params getEnvAsStringParams) (string, error) {
+func getEnvAsStringFunc(params getEnvAsStringParams) (*string, error) {
 	if params.defaultValue != nil && params.isRequired {
-		return "", errors.New("cannot have both a default value and be required")
+		return nil, errors.New("cannot have both a default value and be required")
 	}
 
 	value, exists := os.LookupEnv(params.name)
 
 	if !exists && params.isRequired {
-		return "", errors.New("required env variable does not exist")
+		return nil, errors.New("required env variable does not exist")
 	}
 
 	if !exists {
 		if params.defaultValue != nil {
-			return *params.defaultValue, nil
+			return params.defaultValue, nil
 		}
-		return "", nil
+		return nil, nil
 	}
 
-	return value, nil
+	return &value, nil
 }
 
 type getEnvAsIntParams struct {
@@ -63,7 +63,7 @@ type getEnvAsIntParams struct {
 }
 
 // getEnvAsInt returns the value of the environment variable with the given name.
-func getEnvAsInt(params getEnvAsIntParams) int {
+func getEnvAsInt(params getEnvAsIntParams) *int {
 	value, err := getEnvAsIntFunc(params)
 
 	if err != nil {
@@ -78,31 +78,31 @@ func getEnvAsInt(params getEnvAsIntParams) int {
 }
 
 // getEnvAsIntFunc is the outlying function for getEnvAsInt.
-func getEnvAsIntFunc(params getEnvAsIntParams) (int, error) {
+func getEnvAsIntFunc(params getEnvAsIntParams) (*int, error) {
 	if params.defaultValue != nil && params.isRequired {
-		return 0, errors.New("cannot have both a default value and be required")
+		return nil, errors.New("cannot have both a default value and be required")
 	}
 
 	valueStr, exists := os.LookupEnv(params.name)
 
 	if !exists && params.isRequired {
-		return 0, errors.New("required env variable does not exist")
+		return nil, errors.New("required env variable does not exist")
 	}
 
 	if !exists {
 		if params.defaultValue != nil {
-			return *params.defaultValue, nil
+			return params.defaultValue, nil
 		}
-		return 0, nil
+		return nil, nil
 	}
 
 	value, err := strconv.Atoi(valueStr)
 
 	if err != nil {
-		return 0, errors.New("env variable is not an integer")
+		return nil, errors.New("env variable is not an integer")
 	}
 
-	return value, nil
+	return &value, nil
 }
 
 type getEnvAsBoolParams struct {
@@ -112,7 +112,7 @@ type getEnvAsBoolParams struct {
 }
 
 // getEnvAsBool returns the value of the environment variable with the given name.
-func getEnvAsBool(params getEnvAsBoolParams) bool {
+func getEnvAsBool(params getEnvAsBoolParams) *bool {
 	value, err := getEnvAsBoolFunc(params)
 
 	if err != nil {
@@ -127,29 +127,30 @@ func getEnvAsBool(params getEnvAsBoolParams) bool {
 }
 
 // getEnvAsBoolFunc is the outlying function for getEnvAsBool.
-func getEnvAsBoolFunc(params getEnvAsBoolParams) (bool, error) {
+func getEnvAsBoolFunc(params getEnvAsBoolParams) (*bool, error) {
 	if params.defaultValue != nil && params.isRequired {
-		return false, errors.New("cannot have both a default value and be required")
+		return nil, errors.New("cannot have both a default value and be required")
 	}
 
 	valueStr, exists := os.LookupEnv(params.name)
 
 	if !exists && params.isRequired {
-		return false, errors.New("required env variable does not exist")
+		return nil, errors.New("required env variable does not exist")
 	}
 
 	if !exists {
 		if params.defaultValue != nil {
-			return *params.defaultValue, nil
+			return params.defaultValue, nil
 		}
-		return false, nil
+		f := false
+		return &f, nil
 	}
 
 	value, err := strconv.ParseBool(valueStr)
 
 	if err != nil {
-		return false, errors.New(`env variable is not a boolean, must be "true" or "false"`)
+		return nil, errors.New(`env variable is not a boolean, must be "true" or "false"`)
 	}
 
-	return value, nil
+	return &value, nil
 }

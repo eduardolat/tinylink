@@ -5,46 +5,43 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type DBType string
-type GeneratorType string
-
 const (
-	InMemoryDBType DBType = "in-memory"
-	PostgresDBType DBType = "postgres"
+	InMemoryDBType string = "in-memory"
+	PostgresDBType string = "postgres"
 
-	UUIDGeneratorType   GeneratorType = "uuid"
-	NanoIDGeneratorType GeneratorType = "nanoid"
+	UUIDGeneratorType   string = "uuid"
+	NanoIDGeneratorType string = "nanoid"
 
-	DefaultPort          int           = 3000
-	DefaultDBType        DBType        = InMemoryDBType
-	DefaultGeneratorType GeneratorType = NanoIDGeneratorType
+	DefaultPort          int    = 3000
+	DefaultDBType        string = InMemoryDBType
+	DefaultGeneratorType string = NanoIDGeneratorType
 )
 
 type Env struct {
 	// General env variables
-	PORT           int
-	DB_TYPE        DBType
-	GENERATOR_TYPE GeneratorType
+	PORT           *int
+	DB_TYPE        *string
+	GENERATOR_TYPE *string
 
 	// Basic Auth specific env variables
-	ENABLE_BASIC_AUTH   bool
-	BASIC_AUTH_USERNAME string
-	BASIC_AUTH_PASSWORD string
+	ENABLE_BASIC_AUTH   *bool
+	BASIC_AUTH_USERNAME *string
+	BASIC_AUTH_PASSWORD *string
 
 	// Postgres specific env variables
-	POSTGRES_HOST string
-	POSTGRES_PORT int
-	POSTGRES_USER string
-	POSTGRES_PASS string
-	POSTGRES_DB   string
-	POSTGRES_SSL  bool
+	POSTGRES_HOST *string
+	POSTGRES_PORT *int
+	POSTGRES_USER *string
+	POSTGRES_PASS *string
+	POSTGRES_DB   *string
+	POSTGRES_SSL  *bool
 
 	// UUID specific env variables
-	UUID_REMOVE_DASHES bool
+	UUID_REMOVE_DASHES *bool
 
 	// NanoID specific env variables
-	NANOID_SIZE     int
-	NANOID_ALPHABET string
+	NANOID_SIZE     *int
+	NANOID_ALPHABET *string
 }
 
 // GetEnv returns the environment variables.
@@ -62,14 +59,14 @@ func GetEnv() *Env {
 			name:         "PORT",
 			defaultValue: newDefaultValue(DefaultPort),
 		}),
-		DB_TYPE: DBType(getEnvAsString(getEnvAsStringParams{
+		DB_TYPE: getEnvAsString(getEnvAsStringParams{
 			name:         "DB_TYPE",
-			defaultValue: newDefaultValue(string(DefaultDBType)),
-		})),
-		GENERATOR_TYPE: GeneratorType(getEnvAsString(getEnvAsStringParams{
+			defaultValue: newDefaultValue(DefaultDBType),
+		}),
+		GENERATOR_TYPE: getEnvAsString(getEnvAsStringParams{
 			name:         "GENERATOR_TYPE",
-			defaultValue: newDefaultValue(string(DefaultGeneratorType)),
-		})),
+			defaultValue: newDefaultValue(DefaultGeneratorType),
+		}),
 
 		// Basic Auth specific env variables
 		ENABLE_BASIC_AUTH: getEnvAsBool(getEnvAsBoolParams{

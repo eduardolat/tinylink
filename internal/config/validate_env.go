@@ -5,7 +5,7 @@ import "github.com/eduardolat/tinylink/internal/logger"
 // validateEnv validates the given environment variables.
 // If there is an error, it will log it and exit the program.
 func validateEnv(env *Env) {
-	if env.DB_TYPE == PostgresDBType {
+	if *env.DB_TYPE == PostgresDBType {
 		validatePostgresEnv(env)
 	}
 }
@@ -13,15 +13,15 @@ func validateEnv(env *Env) {
 // validatePostgresEnv validates the given Postgres environment variables.
 // If there is an error, it will log it and exit the program.
 func validatePostgresEnv(env *Env) {
-	if env.POSTGRES_HOST == "" {
+	if env.POSTGRES_HOST == nil {
 		logger.FatalError("POSTGRES_HOST is required")
 	}
 
-	if env.POSTGRES_PORT == 0 {
+	if env.POSTGRES_PORT == nil {
 		logger.FatalError("POSTGRES_PORT is required")
 	}
 
-	if env.POSTGRES_USER == "" {
+	if env.POSTGRES_USER == nil {
 		logger.FatalError("POSTGRES_USER is required")
 	}
 }
