@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/eduardolat/tinylink/internal/api"
 	"github.com/eduardolat/tinylink/internal/config"
@@ -11,6 +12,7 @@ import (
 	"github.com/eduardolat/tinylink/internal/shortener"
 	"github.com/eduardolat/tinylink/internal/shortgens/nanoid"
 	"github.com/eduardolat/tinylink/internal/web"
+	"github.com/eduardolat/tinylink/static"
 	"github.com/labstack/echo/v4"
 )
 
@@ -35,6 +37,11 @@ func main() {
 	app := echo.New()
 	app.HideBanner = true
 	app.HidePort = true
+
+	app.StaticFS("/static", static.StaticFs)
+	app.GET("/favicon.ico", func(c echo.Context) error {
+		return c.Blob(http.StatusOK, "image/x-icon", static.Favicon)
+	})
 
 	webGroup := app.Group("")
 	web.MountRouter(webGroup, mid, shortenerClient)
