@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (h *handlers) redirect(c echo.Context) error {
+func (h *handlers) redirectHandler(c echo.Context) error {
 	shortCode := c.Param("shortCode")
 	if shortCode == "" {
 		return c.String(http.StatusBadRequest, "shortCode is required")

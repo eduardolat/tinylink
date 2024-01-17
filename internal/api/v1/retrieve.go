@@ -6,7 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (h *handlers) retrieve(c echo.Context) error {
+func (h *handlers) retrieveHandler(c echo.Context) error {
 	shortCode := c.QueryParam("shortCode")
 	if shortCode == "" {
 		return c.String(http.StatusBadRequest, "shortCode query param is required")

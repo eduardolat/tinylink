@@ -8,5 +8,5 @@ import (
 func MountRouter(group *echo.Group, shortener *shortener.Shortener) {
 	handlers := newHandlers(shortener)
 
-	group.GET("/:shortCode", handlers.redirect)
+	group.GET("/:shortCode", handlers.redirectHandler)
 }

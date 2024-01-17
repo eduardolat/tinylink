@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (h *handlers) shorten(c echo.Context) error {
+func (h *handlers) shortenHandler(c echo.Context) error {
 	url := c.QueryParam("url")
 	if url == "" {
 		return c.String(http.StatusBadRequest, "url query param is required")
