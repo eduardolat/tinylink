@@ -4,25 +4,21 @@ import (
 	"net/http"
 
 	"github.com/eduardolat/tinylink/internal/shortener"
+	"github.com/labstack/echo/v4"
 )
 
-func (m *router) shorten(w http.ResponseWriter, r *http.Request) {
-	url := r.URL.Query().Get("url")
+func (h *handlers) shorten(c echo.Context) error {
+	url := c.QueryParam("url")
 	if url == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("url query param is required"))
-		return
+		return c.String(http.StatusBadRequest, "url query param is required")
 	}
 
-	shortCode, err := m.shortener.ShortenURL(shortener.StoreURLParams{
+	shortCode, err := h.shortener.ShortenURL(shortener.StoreURLParams{
 		OriginalURL: url,
 	})
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
+		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(shortCode))
+	return c.String(http.StatusOK, shortCode)
 }

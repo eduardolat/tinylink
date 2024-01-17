@@ -1,22 +1,21 @@
 package v1
 
-import "net/http"
+import (
+	"net/http"
 
-func (m *router) retrieve(w http.ResponseWriter, r *http.Request) {
-	shortCode := r.URL.Query().Get("shortCode")
+	"github.com/labstack/echo/v4"
+)
+
+func (h *handlers) retrieve(c echo.Context) error {
+	shortCode := c.QueryParam("shortCode")
 	if shortCode == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("shortCode query param is required"))
-		return
+		return c.String(http.StatusBadRequest, "shortCode query param is required")
 	}
 
-	url, err := m.shortener.RetrieveURL(shortCode)
+	url, err := h.shortener.RetrieveURL(shortCode)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
+		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(url.OriginalURL))
+	return c.String(http.StatusOK, url.OriginalURL)
 }

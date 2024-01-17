@@ -1,4 +1,4 @@
-package v1
+package web
 
 import (
 	"github.com/eduardolat/tinylink/internal/shortener"
@@ -8,6 +8,5 @@ import (
 func MountRouter(group *echo.Group, shortener *shortener.Shortener) {
 	handlers := newHandlers(shortener)
 
-	group.GET("/shorten", handlers.shorten)
-	group.GET("/retrieve", handlers.retrieve)
+	group.GET("/:shortCode", handlers.redirect)
 }

@@ -4,23 +4,19 @@ import (
 	"net/http"
 
 	"github.com/eduardolat/tinylink/internal/shortener"
-	"github.com/go-chi/chi/v5"
+	"github.com/labstack/echo/v4"
 )
 
-func (m *ruoter) redirect(w http.ResponseWriter, r *http.Request) {
-	shortCode := chi.URLParam(r, "shortCode")
+func (h *handlers) redirect(c echo.Context) error {
+	shortCode := c.Param("shortCode")
 	if shortCode == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("shortCode is required"))
-		return
+		return c.String(http.StatusBadRequest, "shortCode is required")
 	}
 
 	// Retrieve the URL from the shortener service
-	data, err := m.shortener.RetrieveURL(shortCode)
+	data, err := h.shortener.RetrieveURL(shortCode)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
+		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
 	redirectCode := shortener.HTTPRedirectCodeTemporary
@@ -29,5 +25,5 @@ func (m *ruoter) redirect(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Redirect the user to the URL
-	http.Redirect(w, r, data.OriginalURL, int(redirectCode))
+	return c.Redirect(int(redirectCode), data.OriginalURL)
 }

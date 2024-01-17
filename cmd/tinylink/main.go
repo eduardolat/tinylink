@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/eduardolat/tinylink/internal/api"
 	"github.com/eduardolat/tinylink/internal/config"
@@ -11,11 +10,11 @@ import (
 	"github.com/eduardolat/tinylink/internal/shortener"
 	"github.com/eduardolat/tinylink/internal/shortgens/nanoid"
 	"github.com/eduardolat/tinylink/internal/web"
-	"github.com/go-chi/chi/v5"
+	"github.com/labstack/echo/v4"
 )
 
 func main() {
-	logger.Info("🏁 starting TinyLink")
+	logger.Info("✂️  starting TinyLink")
 	env := config.GetEnv()
 
 	dataStore := inmemory.NewDataStore()
@@ -31,16 +30,20 @@ func main() {
 	shortGen := nanoid.NewShortGen()
 	shortenerClient := shortener.NewShortener(dataStore, shortGen)
 
-	appRouter := chi.NewRouter()
-	apiRouter := api.NewRouter(shortenerClient)
-	webRouter := web.NewRouter(shortenerClient)
+	app := echo.New()
+	app.HideBanner = true
+	app.HidePort = true
 
-	appRouter.Mount("/api", apiRouter)
-	appRouter.Mount("/", webRouter)
+	webGroup := app.Group("")
+	web.MountRouter(webGroup, shortenerClient)
+
+	apiGroup := app.Group("/api")
+	api.MountRouter(apiGroup, shortenerClient)
 
 	port := fmt.Sprintf(":%d", *env.PORT)
-	logger.Info("🚀 starting HTTP server", "port", port)
-	err = http.ListenAndServe(port, appRouter)
+	logger.Info("🚀 HTTP server started", "port", port)
+
+	err = app.Start(port)
 	if err != nil {
 		logger.FatalError(
 			"failed to start HTTP server",

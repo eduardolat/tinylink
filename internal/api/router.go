@@ -1,13 +1,12 @@
-package v1
+package api
 
 import (
+	v1 "github.com/eduardolat/tinylink/internal/api/v1"
 	"github.com/eduardolat/tinylink/internal/shortener"
 	"github.com/labstack/echo/v4"
 )
 
 func MountRouter(group *echo.Group, shortener *shortener.Shortener) {
-	handlers := newHandlers(shortener)
-
-	group.GET("/shorten", handlers.shorten)
-	group.GET("/retrieve", handlers.retrieve)
+	v1Group := group.Group("/v1")
+	v1.MountRouter(v1Group, shortener)
 }
