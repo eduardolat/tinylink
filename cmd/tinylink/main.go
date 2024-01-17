@@ -7,6 +7,7 @@ import (
 	"github.com/eduardolat/tinylink/internal/config"
 	"github.com/eduardolat/tinylink/internal/datastores/inmemory"
 	"github.com/eduardolat/tinylink/internal/logger"
+	"github.com/eduardolat/tinylink/internal/middleware"
 	"github.com/eduardolat/tinylink/internal/shortener"
 	"github.com/eduardolat/tinylink/internal/shortgens/nanoid"
 	"github.com/eduardolat/tinylink/internal/web"
@@ -29,16 +30,17 @@ func main() {
 
 	shortGen := nanoid.NewShortGen()
 	shortenerClient := shortener.NewShortener(dataStore, shortGen)
+	mid := middleware.NewMiddleware(env)
 
 	app := echo.New()
 	app.HideBanner = true
 	app.HidePort = true
 
 	webGroup := app.Group("")
-	web.MountRouter(webGroup, shortenerClient)
+	web.MountRouter(webGroup, mid, shortenerClient)
 
 	apiGroup := app.Group("/api")
-	api.MountRouter(apiGroup, shortenerClient)
+	api.MountRouter(apiGroup, mid, shortenerClient)
 
 	port := fmt.Sprintf(":%d", *env.PORT)
 	logger.Info("🚀 HTTP server started", "port", port)
