@@ -13,20 +13,20 @@ const basicAuthRealm string = "Please Login"
 // sent in the request.
 func (mid *Middleware) BasicAuthIfEnabled(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		if mid.env.ENABLE_BASIC_AUTH == nil ||
-			mid.env.BASIC_AUTH_USERNAME == nil ||
-			mid.env.BASIC_AUTH_PASSWORD == nil {
+		if mid.env.TL_ENABLE_BASIC_AUTH == nil ||
+			mid.env.TL_BASIC_AUTH_USERNAME == nil ||
+			mid.env.TL_BASIC_AUTH_PASSWORD == nil {
 			return next(c)
 		}
 
-		if !*mid.env.ENABLE_BASIC_AUTH {
+		if !*mid.env.TL_ENABLE_BASIC_AUTH {
 			return next(c)
 		}
 
 		username, password, ok := c.Request().BasicAuth()
 		if ok {
-			if username == *mid.env.BASIC_AUTH_USERNAME &&
-				password == *mid.env.BASIC_AUTH_PASSWORD {
+			if username == *mid.env.TL_BASIC_AUTH_USERNAME &&
+				password == *mid.env.TL_BASIC_AUTH_PASSWORD {
 				return next(c)
 			}
 		}

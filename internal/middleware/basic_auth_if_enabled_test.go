@@ -19,9 +19,9 @@ func TestBasicAuthIfEnabled_Success(t *testing.T) {
 	// Set up middleware with basic auth enabled and known credentials
 	mid := &Middleware{
 		env: &config.Env{
-			ENABLE_BASIC_AUTH:   pointerToBool(true),
-			BASIC_AUTH_USERNAME: pointerToString("username"),
-			BASIC_AUTH_PASSWORD: pointerToString("password"),
+			TL_ENABLE_BASIC_AUTH:   pointerToBool(true),
+			TL_BASIC_AUTH_USERNAME: pointerToString("username"),
+			TL_BASIC_AUTH_PASSWORD: pointerToString("password"),
 		},
 	}
 
@@ -47,9 +47,9 @@ func TestBasicAuthIfEnabled_IncorrectCredentials(t *testing.T) {
 	// Set up middleware with basic auth enabled and known credentials
 	mid := &Middleware{
 		env: &config.Env{
-			ENABLE_BASIC_AUTH:   pointerToBool(true),
-			BASIC_AUTH_USERNAME: pointerToString("username"),
-			BASIC_AUTH_PASSWORD: pointerToString("password"),
+			TL_ENABLE_BASIC_AUTH:   pointerToBool(true),
+			TL_BASIC_AUTH_USERNAME: pointerToString("username"),
+			TL_BASIC_AUTH_PASSWORD: pointerToString("password"),
 		},
 	}
 
@@ -78,9 +78,9 @@ func TestBasicAuthIfEnabled_Disabled(t *testing.T) {
 	// Set up middleware with basic auth disabled
 	mid := &Middleware{
 		env: &config.Env{
-			ENABLE_BASIC_AUTH:   pointerToBool(false),
-			BASIC_AUTH_USERNAME: pointerToString("username"),
-			BASIC_AUTH_PASSWORD: pointerToString("password"),
+			TL_ENABLE_BASIC_AUTH:   pointerToBool(false),
+			TL_BASIC_AUTH_USERNAME: pointerToString("username"),
+			TL_BASIC_AUTH_PASSWORD: pointerToString("password"),
 		},
 	}
 
