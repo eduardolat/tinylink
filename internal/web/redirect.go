@@ -41,7 +41,8 @@ func (h *handlers) redirectHandler(c echo.Context) error {
 	// is provided and correct. Otherwise, show the password
 	// required page.
 	if data.Password.Valid && data.Password.String != password {
-		page := redirectPasswordPage(shortCode)
+		showPasswordError := password != ""
+		page := redirectPasswordPage(shortCode, showPasswordError)
 		return echoutil.RenderGomponent(c, http.StatusOK, page)
 	}
 
@@ -54,7 +55,7 @@ func (h *handlers) redirectHandler(c echo.Context) error {
 	return c.Redirect(int(redirectCode), data.OriginalURL)
 }
 
-func redirectPasswordPage(shortCode string) gomponents.Node {
+func redirectPasswordPage(shortCode string, showPasswordError bool) gomponents.Node {
 	return layouts.Public("Password Required", []gomponents.Node{
 		html.H1(gomponents.Text("Password Required")),
 		html.FormEl(
@@ -72,12 +73,19 @@ func redirectPasswordPage(shortCode string) gomponents.Node {
 					html.Type("password"),
 					html.Name("password"),
 					html.Placeholder("Password"),
+					html.Required(),
+					html.AutoFocus(),
 				),
 			),
 			html.Button(
 				html.Type("submit"),
 				gomponents.Text("Submit"),
 			),
+		),
+
+		gomponents.If(
+			showPasswordError,
+			gomponents.Raw(`<script>alert("Incorrect password")</script>`),
 		),
 	})
 }
