@@ -30,12 +30,7 @@ type Env struct {
 	TL_BASIC_AUTH_PASSWORD *string
 
 	// Postgres specific env variables
-	TL_POSTGRES_HOST *string
-	TL_POSTGRES_PORT *int
-	TL_POSTGRES_USER *string
-	TL_POSTGRES_PASS *string
-	TL_POSTGRES_DB   *string
-	TL_POSTGRES_SSL  *bool
+	TL_POSTGRES_CONNECTION_STRING *string
 
 	// UUID specific env variables
 	TL_UUID_REMOVE_DASHES *bool
@@ -88,28 +83,8 @@ func GetEnv() *Env {
 		}),
 
 		// Postgres specific env variables
-		TL_POSTGRES_HOST: getEnvAsString(getEnvAsStringParams{
-			name:       "TL_POSTGRES_HOST",
-			isRequired: false,
-		}),
-		TL_POSTGRES_PORT: getEnvAsInt(getEnvAsIntParams{
-			name:       "TL_POSTGRES_PORT",
-			isRequired: false,
-		}),
-		TL_POSTGRES_USER: getEnvAsString(getEnvAsStringParams{
-			name:       "TL_POSTGRES_USER",
-			isRequired: false,
-		}),
-		TL_POSTGRES_PASS: getEnvAsString(getEnvAsStringParams{
-			name:       "TL_POSTGRES_PASS",
-			isRequired: false,
-		}),
-		TL_POSTGRES_DB: getEnvAsString(getEnvAsStringParams{
-			name:       "TL_POSTGRES_DB",
-			isRequired: false,
-		}),
-		TL_POSTGRES_SSL: getEnvAsBool(getEnvAsBoolParams{
-			name:       "TL_POSTGRES_ENABLE_SSL",
+		TL_POSTGRES_CONNECTION_STRING: getEnvAsString(getEnvAsStringParams{
+			name:       "TL_POSTGRES_CONNECTION_STRING",
 			isRequired: false,
 		}),
 

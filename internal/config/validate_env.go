@@ -20,16 +20,8 @@ func validatePostgresEnv(env *Env) {
 		return
 	}
 
-	if env.TL_POSTGRES_HOST == nil {
-		logger.FatalError("POSTGRES_HOST is required")
-	}
-
-	if env.TL_POSTGRES_PORT == nil {
-		logger.FatalError("POSTGRES_PORT is required")
-	}
-
-	if env.TL_POSTGRES_USER == nil {
-		logger.FatalError("POSTGRES_USER is required")
+	if env.TL_POSTGRES_CONNECTION_STRING == nil {
+		logger.FatalError("TL_POSTGRES_CONNECTION_STRING is required")
 	}
 }
 
@@ -45,10 +37,10 @@ func validateBasicAuth(env *Env) {
 	}
 
 	if env.TL_BASIC_AUTH_USERNAME == nil {
-		logger.FatalError("BASIC_AUTH_USERNAME is required")
+		logger.FatalError("TL_BASIC_AUTH_USERNAME is required")
 	}
 
 	if env.TL_BASIC_AUTH_PASSWORD == nil {
-		logger.FatalError("BASIC_AUTH_PASSWORD is required")
+		logger.FatalError("TL_BASIC_AUTH_PASSWORD is required")
 	}
 }
