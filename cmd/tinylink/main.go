@@ -49,7 +49,7 @@ func main() {
 	apiGroup := app.Group("/api")
 	api.MountRouter(apiGroup, mid, shortenerClient)
 
-	port := fmt.Sprintf(":%d", *env.PORT)
+	port := fmt.Sprintf(":%d", *env.TL_PORT)
 	logger.Info("🚀 HTTP server started", "port", port)
 
 	err = app.Start(port)

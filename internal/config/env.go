@@ -19,29 +19,30 @@ const (
 
 type Env struct {
 	// General env variables
-	PORT           *int
-	DB_TYPE        *string
-	GENERATOR_TYPE *string
+	TL_PORT           *int
+	TL_DB_TYPE        *string
+	TL_GENERATOR_TYPE *string
+	TL_URL            *string
 
 	// Basic Auth specific env variables
-	ENABLE_BASIC_AUTH   *bool
-	BASIC_AUTH_USERNAME *string
-	BASIC_AUTH_PASSWORD *string
+	TL_ENABLE_BASIC_AUTH   *bool
+	TL_BASIC_AUTH_USERNAME *string
+	TL_BASIC_AUTH_PASSWORD *string
 
 	// Postgres specific env variables
-	POSTGRES_HOST *string
-	POSTGRES_PORT *int
-	POSTGRES_USER *string
-	POSTGRES_PASS *string
-	POSTGRES_DB   *string
-	POSTGRES_SSL  *bool
+	TL_POSTGRES_HOST *string
+	TL_POSTGRES_PORT *int
+	TL_POSTGRES_USER *string
+	TL_POSTGRES_PASS *string
+	TL_POSTGRES_DB   *string
+	TL_POSTGRES_SSL  *bool
 
 	// UUID specific env variables
-	UUID_REMOVE_DASHES *bool
+	TL_UUID_REMOVE_DASHES *bool
 
 	// NanoID specific env variables
-	NANOID_SIZE     *int
-	NANOID_ALPHABET *string
+	TL_NANOID_SIZE     *int
+	TL_NANOID_ALPHABET *string
 }
 
 // GetEnv returns the environment variables.
@@ -55,72 +56,76 @@ func GetEnv() *Env {
 
 	env := &Env{
 		// General env variables
-		PORT: getEnvAsInt(getEnvAsIntParams{
-			name:         "PORT",
+		TL_PORT: getEnvAsInt(getEnvAsIntParams{
+			name:         "TL_PORT",
 			defaultValue: newDefaultValue(DefaultPort),
 		}),
-		DB_TYPE: getEnvAsString(getEnvAsStringParams{
-			name:         "DB_TYPE",
+		TL_DB_TYPE: getEnvAsString(getEnvAsStringParams{
+			name:         "TL_DB_TYPE",
 			defaultValue: newDefaultValue(DefaultDBType),
 		}),
-		GENERATOR_TYPE: getEnvAsString(getEnvAsStringParams{
-			name:         "GENERATOR_TYPE",
+		TL_GENERATOR_TYPE: getEnvAsString(getEnvAsStringParams{
+			name:         "TL_GENERATOR_TYPE",
 			defaultValue: newDefaultValue(DefaultGeneratorType),
+		}),
+		TL_URL: getEnvAsString(getEnvAsStringParams{
+			name:       "TL_URL",
+			isRequired: true,
 		}),
 
 		// Basic Auth specific env variables
-		ENABLE_BASIC_AUTH: getEnvAsBool(getEnvAsBoolParams{
-			name:       "ENABLE_BASIC_AUTH",
+		TL_ENABLE_BASIC_AUTH: getEnvAsBool(getEnvAsBoolParams{
+			name:       "TL_ENABLE_BASIC_AUTH",
 			isRequired: false,
 		}),
-		BASIC_AUTH_USERNAME: getEnvAsString(getEnvAsStringParams{
-			name:       "BASIC_AUTH_USERNAME",
+		TL_BASIC_AUTH_USERNAME: getEnvAsString(getEnvAsStringParams{
+			name:       "TL_BASIC_AUTH_USERNAME",
 			isRequired: false,
 		}),
-		BASIC_AUTH_PASSWORD: getEnvAsString(getEnvAsStringParams{
-			name:       "BASIC_AUTH_PASSWORD",
+		TL_BASIC_AUTH_PASSWORD: getEnvAsString(getEnvAsStringParams{
+			name:       "TL_BASIC_AUTH_PASSWORD",
 			isRequired: false,
 		}),
 
 		// Postgres specific env variables
-		POSTGRES_HOST: getEnvAsString(getEnvAsStringParams{
-			name:       "POSTGRES_HOST",
+		TL_POSTGRES_HOST: getEnvAsString(getEnvAsStringParams{
+			name:       "TL_POSTGRES_HOST",
 			isRequired: false,
 		}),
-		POSTGRES_PORT: getEnvAsInt(getEnvAsIntParams{
-			name:       "POSTGRES_PORT",
+		TL_POSTGRES_PORT: getEnvAsInt(getEnvAsIntParams{
+			name:       "TL_POSTGRES_PORT",
 			isRequired: false,
 		}),
-		POSTGRES_USER: getEnvAsString(getEnvAsStringParams{
-			name:       "POSTGRES_USER",
+		TL_POSTGRES_USER: getEnvAsString(getEnvAsStringParams{
+			name:       "TL_POSTGRES_USER",
 			isRequired: false,
 		}),
-		POSTGRES_PASS: getEnvAsString(getEnvAsStringParams{
-			name:       "POSTGRES_PASS",
+		TL_POSTGRES_PASS: getEnvAsString(getEnvAsStringParams{
+			name:       "TL_POSTGRES_PASS",
 			isRequired: false,
 		}),
-		POSTGRES_DB: getEnvAsString(getEnvAsStringParams{
-			name:       "POSTGRES_DB",
+		TL_POSTGRES_DB: getEnvAsString(getEnvAsStringParams{
+			name:       "TL_POSTGRES_DB",
 			isRequired: false,
 		}),
-		POSTGRES_SSL: getEnvAsBool(getEnvAsBoolParams{
-			name:       "POSTGRES_SSL",
+		TL_POSTGRES_SSL: getEnvAsBool(getEnvAsBoolParams{
+			name:       "TL_POSTGRES_ENABLE_SSL",
 			isRequired: false,
 		}),
 
 		// UUID specific env variables
-		UUID_REMOVE_DASHES: getEnvAsBool(getEnvAsBoolParams{
-			name:       "UUID_REMOVE_DASHES",
+		TL_UUID_REMOVE_DASHES: getEnvAsBool(getEnvAsBoolParams{
+			name:       "TL_UUID_REMOVE_DASHES",
 			isRequired: false,
 		}),
 
 		// NanoID specific env variables
-		NANOID_SIZE: getEnvAsInt(getEnvAsIntParams{
-			name:       "NANOID_SIZE",
+		TL_NANOID_SIZE: getEnvAsInt(getEnvAsIntParams{
+			name:       "TL_NANOID_SIZE",
 			isRequired: false,
 		}),
-		NANOID_ALPHABET: getEnvAsString(getEnvAsStringParams{
-			name:       "NANOID_ALPHABET",
+		TL_NANOID_ALPHABET: getEnvAsString(getEnvAsStringParams{
+			name:       "TL_NANOID_ALPHABET",
 			isRequired: false,
 		}),
 	}
