@@ -7,6 +7,18 @@ import (
 
 // URLData is the data structure that will be stored in the database
 type URLData struct {
+	// ShortCode is the short code that will be used to retrieve the URL.
+	// Can be sequential, random, uuid, etc.
+	// In some data stores, this field can be the primary key
+	ShortCode string
+
+	// OriginalURL is the URL that the user wants to shorten
+	OriginalURL string
+
+	// HTTPRedirectCode is the HTTP code that will be used to redirect the user
+	// to the original URL
+	HTTPRedirectCode int
+
 	// IsActive is a flag that indicates if the URL is active or not
 	// If the value is false, the URL will not be accessible
 	IsActive bool
@@ -16,18 +28,6 @@ type URLData struct {
 
 	// Tags is a list of tags that the user can use to categorize the URL
 	Tags []string
-
-	// HTTPRedirectCode is the HTTP code that will be used to redirect the user
-	// to the original URL
-	HTTPRedirectCode int
-
-	// OriginalURL is the URL that the user wants to shorten
-	OriginalURL string
-
-	// ShortCode is the short code that will be used to retrieve the URL.
-	// Can be sequential, random, uuid, etc.
-	// In some data stores, this field can be the primary key
-	ShortCode string
 
 	// Password is the password that the user must enter to access the URL
 	// If the value is null, the URL will not be password protected
