@@ -14,9 +14,17 @@ func Public(title string, children []gomponents.Node) gomponents.Node {
 	return components.HTML5(components.HTML5Props{
 		Title:    title,
 		Language: "en",
-		Head:     []gomponents.Node{},
+		Head: []gomponents.Node{
+			html.Link(
+				html.Rel("stylesheet"),
+				html.Href("https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css"),
+			),
+		},
 		Body: []gomponents.Node{
-			html.Main(children...),
+			html.Main(
+				html.Class("container"),
+				gomponents.Group(children),
+			),
 		},
 	})
 }
