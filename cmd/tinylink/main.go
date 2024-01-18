@@ -31,7 +31,7 @@ func main() {
 	}
 
 	shortGen := nanoid.NewShortGen()
-	shortenerClient := shortener.NewShortener(dataStore, shortGen)
+	shortenerClient := shortener.NewShortener(env, dataStore, shortGen)
 	mid := middleware.NewMiddleware(env)
 
 	app := echo.New()
