@@ -19,7 +19,7 @@ type URLData struct {
 
 	// HTTPRedirectCode is the HTTP code that will be used to redirect the user
 	// to the original URL
-	HTTPRedirectCode HTTPRedirectCode
+	HTTPRedirectCode int
 
 	// OriginalURL is the URL that the user wants to shorten
 	OriginalURL string
@@ -82,7 +82,7 @@ type StoreURLParams struct {
 
 	// HTTPRedirectCode is the HTTP code that will be used to redirect the user
 	// to the original URL
-	HTTPRedirectCode HTTPRedirectCode
+	HTTPRedirectCode int
 
 	// Description is a short description of the URL
 	Description sql.NullString
@@ -124,7 +124,7 @@ type UpdateURLParams struct {
 	Tags []string
 
 	// HTTPRedirectCode is the HTTP code that will be used to redirect the user
-	HTTPRedirectCode HTTPRedirectCode
+	HTTPRedirectCode int
 
 	// Password is the password that the user must enter to access the URL
 	Password sql.NullString

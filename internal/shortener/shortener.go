@@ -3,6 +3,7 @@ package shortener
 import (
 	"errors"
 
+	"github.com/eduardolat/tinylink/internal/config"
 	"github.com/eduardolat/tinylink/internal/logger"
 )
 
@@ -15,15 +16,18 @@ var (
 )
 
 type Shortener struct {
+	env       *config.Env
 	dataStore DataStore
 	shortGen  ShortGen
 }
 
 func NewShortener(
+	env *config.Env,
 	dataStore DataStore,
 	shortGen ShortGen,
 ) *Shortener {
 	return &Shortener{
+		env:       env,
 		dataStore: dataStore,
 		shortGen:  shortGen,
 	}
@@ -146,4 +150,18 @@ func (c *Shortener) IncrementClicks(shortCode string) error {
 // of a URL that was previously shortened
 func (c *Shortener) IncrementRedirects(shortCode string) error {
 	return c.dataStore.IncrementRedirects(shortCode)
+}
+
+// CreateShortURL is the function that will be used to create a short URL
+// from a short code and the base URL
+func (c *Shortener) CreateShortURL(shortCode string) string {
+	url := ""
+	if c.env.TL_URL != nil {
+		url = *c.env.TL_URL
+	}
+	if url[len(url)-1:] != "/" {
+		url += "/"
+	}
+
+	return url + shortCode
 }
