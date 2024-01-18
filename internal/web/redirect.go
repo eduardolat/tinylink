@@ -75,17 +75,22 @@ func redirectPasswordPage(shortCode string, showPasswordError bool) gomponents.N
 					html.Placeholder("Password"),
 					html.Required(),
 					html.AutoFocus(),
+					gomponents.If(
+						showPasswordError,
+						html.Aria("invalid", "true"),
+					),
+				),
+				gomponents.If(
+					showPasswordError,
+					html.Small(
+						gomponents.Text("Incorrect password"),
+					),
 				),
 			),
 			html.Button(
 				html.Type("submit"),
 				gomponents.Text("Submit"),
 			),
-		),
-
-		gomponents.If(
-			showPasswordError,
-			gomponents.Raw(`<script>alert("Incorrect password")</script>`),
 		),
 	})
 }
