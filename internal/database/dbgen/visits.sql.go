@@ -24,6 +24,19 @@ func (q *Queries) Visits_CountAllForLink(ctx context.Context, linkID uuid.UUID) 
 	return count, err
 }
 
+const visits_CountAllRedirectedForLink = `-- name: Visits_CountAllRedirectedForLink :one
+SELECT COUNT(*) FROM visits
+WHERE link_id = $1
+AND is_redirected = TRUE
+`
+
+func (q *Queries) Visits_CountAllRedirectedForLink(ctx context.Context, linkID uuid.UUID) (int64, error) {
+	row := q.db.QueryRowContext(ctx, visits_CountAllRedirectedForLink, linkID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const visits_Create = `-- name: Visits_Create :one
 INSERT INTO visits (
     link_id,

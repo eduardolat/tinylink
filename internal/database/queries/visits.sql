@@ -25,6 +25,11 @@ WHERE id = $1 RETURNING *;
 SELECT COUNT(*) FROM visits
 WHERE link_id = $1;
 
+-- name: Visits_CountAllRedirectedForLink :one
+SELECT COUNT(*) FROM visits
+WHERE link_id = $1
+AND is_redirected = TRUE;
+
 -- name: Visits_PaginateForLink :many
 SELECT * FROM visits
 WHERE link_id = $1
