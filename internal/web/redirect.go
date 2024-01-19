@@ -12,6 +12,9 @@ import (
 	"github.com/maragudk/gomponents/html"
 )
 
+// TODO: Insert the visits and mark the link as visited
+// TODO: Hash the password before storing it in the database and before comparing
+
 func (h *handlers) redirectHandler(c echo.Context) error {
 	// The short code is the last part of the URL
 	shortCode := c.Param("shortCode")
@@ -24,35 +27,35 @@ func (h *handlers) redirectHandler(c echo.Context) error {
 	password := c.FormValue("password")
 
 	// Retrieve the URL from the shortener service
-	data, err := h.shortener.RetrieveURL(shortCode)
+	link, err := h.shortener.GetByShortCode(shortCode)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
 	// Check if the link is active and not expired
-	if !data.IsActive {
+	if !link.IsActive {
 		return c.Redirect(http.StatusFound, "/404")
 	}
-	if data.ExpiresAt.Valid && data.ExpiresAt.Time.Before(time.Now()) {
+	if link.ExpiresAt.Valid && link.ExpiresAt.Time.Before(time.Now()) {
 		return c.Redirect(http.StatusFound, "/404")
 	}
 
 	// If the link is password protected, check if the password
 	// is provided and correct. Otherwise, show the password
 	// required page.
-	if data.Password.Valid && data.Password.String != password {
+	if link.Password.Valid && link.Password.String != password {
 		showPasswordError := password != ""
 		page := redirectPasswordPage(shortCode, showPasswordError)
 		return echoutil.RenderGomponent(c, http.StatusOK, page)
 	}
 
 	redirectCode := shortener.HTTPRedirectCodeTemporary
-	if data.HTTPRedirectCode != 0 {
-		redirectCode = data.HTTPRedirectCode
+	if link.HttpRedirectCode != 0 {
+		redirectCode = int(link.HttpRedirectCode)
 	}
 
 	// Redirect the user to the URL
-	return c.Redirect(int(redirectCode), data.OriginalURL)
+	return c.Redirect(int(redirectCode), link.OriginalUrl)
 }
 
 func redirectPasswordPage(shortCode string, showPasswordError bool) gomponents.Node {
