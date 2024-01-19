@@ -4,9 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/eduardolat/tinylink/internal/config"
 	"github.com/eduardolat/tinylink/internal/database/dbgen"
+	"github.com/eduardolat/tinylink/internal/hashutil"
 	"github.com/eduardolat/tinylink/internal/logger"
 	"github.com/google/uuid"
 )
@@ -39,7 +41,8 @@ func NewShortener(
 	}
 }
 
-// Shorten is the function that will be used to shorten a URL
+// Shorten is the function that will be used to shorten a URL.
+// If password is provided, it will be hashed before being stored
 func (c *Shortener) Shorten(
 	params dbgen.Links_CreateParams,
 	// duplicateIfExists is a boolean that indicates if the user wants to
@@ -122,6 +125,18 @@ func (c *Shortener) Shorten(
 
 		if params.ShortCode == "" {
 			return dbgen.Link{}, ErrShortCodeNotAvailable
+		}
+	}
+
+	// Hash password if provided before storing it
+	if params.Password.Valid && params.Password.String != "" {
+		hashedPassword, err := hashutil.GenerateHashFromPassword(params.Password.String)
+		if err != nil {
+			return dbgen.Link{}, fmt.Errorf("failed to hash password: %w", err)
+		}
+		params.Password = sql.NullString{
+			Valid:  true,
+			String: hashedPassword,
 		}
 	}
 
