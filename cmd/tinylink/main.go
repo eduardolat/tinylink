@@ -6,7 +6,7 @@ import (
 
 	"github.com/eduardolat/tinylink/internal/api"
 	"github.com/eduardolat/tinylink/internal/config"
-	"github.com/eduardolat/tinylink/internal/datastores/inmemory"
+	"github.com/eduardolat/tinylink/internal/datastores/postgres"
 	"github.com/eduardolat/tinylink/internal/logger"
 	"github.com/eduardolat/tinylink/internal/middleware"
 	"github.com/eduardolat/tinylink/internal/shortener"
@@ -20,8 +20,16 @@ func main() {
 	logger.Info("✂️  starting TinyLink")
 	env := config.GetEnv()
 
-	dataStore := inmemory.NewDataStore()
-	err := dataStore.AutoMigrate()
+	dataStore, err := postgres.NewDataStore(env)
+	if err != nil {
+		logger.FatalError(
+			"failed to initialize data store",
+			"error",
+			err,
+		)
+	}
+
+	err = dataStore.AutoMigrate()
 	if err != nil {
 		logger.FatalError(
 			"failed to auto migrate data store",
