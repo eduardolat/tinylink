@@ -347,8 +347,8 @@ func (c *Shortener) PaginateVisitsForLink(
 // from a short code and the base URL
 func (c *Shortener) CreateShortLinkFromCode(shortCode string) string {
 	url := ""
-	if c.env.TL_URL != nil {
-		url = *c.env.TL_URL
+	if c.env.TL_BASE_URL != nil {
+		url = *c.env.TL_BASE_URL
 	}
 	if url[len(url)-1:] != "/" {
 		url += "/"

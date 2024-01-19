@@ -17,7 +17,7 @@ type Env struct {
 	// General env variables
 	TL_PORT           *int
 	TL_GENERATOR_TYPE *string
-	TL_URL            *string
+	TL_BASE_URL       *string
 
 	// Postgres specific env variables
 	TL_POSTGRES_CONNECTION_STRING *string
@@ -54,8 +54,8 @@ func GetEnv() *Env {
 			name:         "TL_GENERATOR_TYPE",
 			defaultValue: newDefaultValue(DefaultGeneratorType),
 		}),
-		TL_URL: getEnvAsString(getEnvAsStringParams{
-			name:       "TL_URL",
+		TL_BASE_URL: getEnvAsString(getEnvAsStringParams{
+			name:       "TL_BASE_URL",
 			isRequired: true,
 		}),
 
