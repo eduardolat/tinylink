@@ -19,3 +19,23 @@ tasks:
 
   tidy:
     cmd: go mod tidy
+
+  # Require database connection string in .env file
+  # Example: task migrations:create -- name_of_migration
+  migrations:create:
+    cmd: go run ./cmd/migrations/. create {{.CLI_ARGS}}
+
+  # Require database connection string in .env file
+  # Up ALL pending migrations
+  migrations:up:
+    cmd: go run ./cmd/migrations/. up
+
+  # Require database connection string in .env file
+  # Roll back the DB version by 1
+  migrations:down:
+    cmd: go run ./cmd/migrations/. down
+
+  # Require database connection string in .env file
+  # Roll back all migrations
+  migrations:reset:
+    cmd: go run ./cmd/migrations/. reset
