@@ -242,6 +242,107 @@ func (c *Shortener) DeleteURL(id uuid.UUID) error {
 	return err
 }
 
+// CreateLinkVisit is the function that will be used to create a visit
+// for a shortened URL
+func (c *Shortener) CreateLinkVisit(linkID uuid.UUID, params dbgen.Visits_CreateParams) (dbgen.Visit, error) {
+	params.LinkID = linkID
+	visit, err := c.dbg.Visits_Create(
+		context.Background(),
+		params,
+	)
+	return visit, err
+}
+
+// SetLinkVisitAsRedirected is the function that will be used to set a visit
+// as redirected
+func (c *Shortener) SetLinkVisitAsRedirected(id uuid.UUID) (dbgen.Visit, error) {
+	visit, err := c.dbg.Visits_SetIsRedirected(
+		context.Background(),
+		dbgen.Visits_SetIsRedirectedParams{
+			ID:           id,
+			IsRedirected: true,
+		},
+	)
+	return visit, err
+}
+
+// GetTotalLinkVisits is the function that will be used to get the total
+// visits for a shortened URL
+func (c *Shortener) GetTotalLinkVisits(linkID uuid.UUID) (int64, error) {
+	count, err := c.dbg.Visits_CountAllForLink(
+		context.Background(),
+		linkID,
+	)
+	return count, err
+}
+
+// GetTotalLinkRedirectedVisits is the function that will be used to get the total
+// visits for a shortened URL that were redirected
+func (c *Shortener) GetTotalLinkRedirectedVisits(linkID uuid.UUID) (int64, error) {
+	count, err := c.dbg.Visits_CountAllRedirectedForLink(
+		context.Background(),
+		linkID,
+	)
+	return count, err
+}
+
+type PaginateLinkVisitsParams struct {
+	Page               int
+	Size               int
+	FilterIp           sql.NullString
+	FilterIsRedirected sql.NullBool
+}
+
+type PaginateLinkVisitsResponse struct {
+	Page       int
+	PrevPage   int
+	NextPage   int
+	TotalPages int
+	TotalItems int
+	Items      []dbgen.Visit
+}
+
+// PaginateLinkVisits is the function that will be used to paginate the visits
+// for a shortened URL
+func (c *Shortener) PaginateLinkVisits(
+	linkID uuid.UUID,
+	params PaginateLinkVisitsParams,
+) (PaginateLinkVisitsResponse, error) {
+	totalCount, err := c.dbg.Visits_PaginateForLinkCountTotalMatches(
+		context.Background(),
+		dbgen.Visits_PaginateForLinkCountTotalMatchesParams{
+			LinkID:             linkID,
+			FilterIp:           params.FilterIp,
+			FilterIsRedirected: params.FilterIsRedirected,
+		},
+	)
+	if err != nil {
+		return PaginateLinkVisitsResponse{}, err
+	}
+
+	args := createPaginationDBArgs(params.Page, params.Size)
+	items, err := c.dbg.Visits_PaginateForLink(
+		context.Background(),
+		dbgen.Visits_PaginateForLinkParams{
+			LinkID:             linkID,
+			FilterIp:           params.FilterIp,
+			FilterIsRedirected: params.FilterIsRedirected,
+			Limit:              args.Limit,
+			Offset:             args.Offset,
+		},
+	)
+	pagination := createPagination(params.Page, params.Size, int(totalCount))
+
+	return PaginateLinkVisitsResponse{
+		Page:       pagination.Page,
+		PrevPage:   pagination.PrevPage,
+		NextPage:   pagination.NextPage,
+		TotalPages: pagination.TotalPages,
+		TotalItems: pagination.TotalItems,
+		Items:      items,
+	}, nil
+}
+
 // CreateShortURL is the function that will be used to create a short URL
 // from a short code and the base URL
 func (c *Shortener) CreateShortURL(shortCode string) string {
