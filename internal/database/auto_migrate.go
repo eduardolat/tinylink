@@ -5,6 +5,7 @@ import (
 	"embed"
 	"fmt"
 
+	"github.com/eduardolat/tinylink/internal/logger"
 	"github.com/pressly/goose/v3"
 )
 
@@ -27,8 +28,9 @@ var embedMigrations embed.FS
 // without worrying about losing data.
 func AutoMigrate(db *sql.DB) error {
 	goose.SetBaseFS(embedMigrations)
+	goose.SetLogger(&gooseCustomLogger{})
 
-	if err := goose.SetDialect("postgres"); err != nil {
+	if err := goose.SetDialect(string(goose.DialectPostgres)); err != nil {
 		return fmt.Errorf("failed to set goose dialect: %w", err)
 	}
 
@@ -37,4 +39,14 @@ func AutoMigrate(db *sql.DB) error {
 	}
 
 	return nil
+}
+
+// gooseCustomLogger is a custom logger for goose that uses the app logger.
+type gooseCustomLogger struct{}
+
+func (*gooseCustomLogger) Fatalf(format string, v ...interface{}) {
+	logger.FatalError(fmt.Sprintf(format, v...))
+}
+func (*gooseCustomLogger) Printf(format string, v ...interface{}) {
+	logger.Info(fmt.Sprintf(format, v...))
 }
