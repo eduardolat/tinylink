@@ -6,38 +6,33 @@ import (
 )
 
 const (
-	InMemoryDBType string = "in-memory"
-	PostgresDBType string = "postgres"
-
-	UUIDGeneratorType   string = "uuid"
-	NanoIDGeneratorType string = "nanoid"
+	GeneratorTypeUUID   string = "uuid"
+	GeneratorTypeNanoID string = "nanoid"
 
 	DefaultPort          int    = 3000
-	DefaultDBType        string = InMemoryDBType
-	DefaultGeneratorType string = NanoIDGeneratorType
+	DefaultGeneratorType string = GeneratorTypeNanoID
 )
 
 type Env struct {
 	// General env variables
 	TL_PORT           *int
-	TL_DB_TYPE        *string
 	TL_GENERATOR_TYPE *string
 	TL_URL            *string
+
+	// Postgres specific env variables
+	TL_POSTGRES_CONNECTION_STRING *string
 
 	// Basic Auth specific env variables
 	TL_ENABLE_BASIC_AUTH   *bool
 	TL_BASIC_AUTH_USERNAME *string
 	TL_BASIC_AUTH_PASSWORD *string
 
-	// Postgres specific env variables
-	TL_POSTGRES_CONNECTION_STRING *string
-
-	// UUID specific env variables
-	TL_UUID_REMOVE_DASHES *bool
-
 	// NanoID specific env variables
 	TL_NANOID_SIZE     *int
 	TL_NANOID_ALPHABET *string
+
+	// UUID specific env variables
+	TL_UUID_REMOVE_DASHES *bool
 }
 
 // GetEnv returns the environment variables.
@@ -55,16 +50,18 @@ func GetEnv() *Env {
 			name:         "TL_PORT",
 			defaultValue: newDefaultValue(DefaultPort),
 		}),
-		TL_DB_TYPE: getEnvAsString(getEnvAsStringParams{
-			name:         "TL_DB_TYPE",
-			defaultValue: newDefaultValue(DefaultDBType),
-		}),
 		TL_GENERATOR_TYPE: getEnvAsString(getEnvAsStringParams{
 			name:         "TL_GENERATOR_TYPE",
 			defaultValue: newDefaultValue(DefaultGeneratorType),
 		}),
 		TL_URL: getEnvAsString(getEnvAsStringParams{
 			name:       "TL_URL",
+			isRequired: true,
+		}),
+
+		// Postgres specific env variables
+		TL_POSTGRES_CONNECTION_STRING: getEnvAsString(getEnvAsStringParams{
+			name:       "TL_POSTGRES_CONNECTION_STRING",
 			isRequired: true,
 		}),
 
@@ -82,18 +79,6 @@ func GetEnv() *Env {
 			isRequired: false,
 		}),
 
-		// Postgres specific env variables
-		TL_POSTGRES_CONNECTION_STRING: getEnvAsString(getEnvAsStringParams{
-			name:       "TL_POSTGRES_CONNECTION_STRING",
-			isRequired: false,
-		}),
-
-		// UUID specific env variables
-		TL_UUID_REMOVE_DASHES: getEnvAsBool(getEnvAsBoolParams{
-			name:       "TL_UUID_REMOVE_DASHES",
-			isRequired: false,
-		}),
-
 		// NanoID specific env variables
 		TL_NANOID_SIZE: getEnvAsInt(getEnvAsIntParams{
 			name:       "TL_NANOID_SIZE",
@@ -101,6 +86,12 @@ func GetEnv() *Env {
 		}),
 		TL_NANOID_ALPHABET: getEnvAsString(getEnvAsStringParams{
 			name:       "TL_NANOID_ALPHABET",
+			isRequired: false,
+		}),
+
+		// UUID specific env variables
+		TL_UUID_REMOVE_DASHES: getEnvAsBool(getEnvAsBoolParams{
+			name:       "TL_UUID_REMOVE_DASHES",
 			isRequired: false,
 		}),
 	}
