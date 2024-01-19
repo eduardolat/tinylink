@@ -1,3 +1,6 @@
+-- name: Links_CountAll :one
+SELECT COUNT(*) FROM links;
+
 -- name: Links_ExistsByShortCode :one
 SELECT EXISTS (
     SELECT 1
@@ -88,3 +91,31 @@ AND (
 )
 ORDER BY created_at DESC
 LIMIT $1 OFFSET $2;
+
+-- name: Links_PaginateCountTotalMatches :one
+SELECT COUNT(*) FROM links
+WHERE (
+  sqlc.narg('filter_is_active')::BOOLEAN IS NULL
+  OR
+  is_active = sqlc.narg('filter_is_active')::BOOLEAN
+)
+AND (
+  sqlc.narg('filter_original_url')::TEXT IS NULL
+  OR
+  original_url ILIKE sqlc.narg('filter_original_url')::TEXT
+)
+AND (
+  sqlc.narg('filter_short_code')::TEXT IS NULL
+  OR
+  short_code ILIKE sqlc.narg('filter_short_code')::TEXT
+)
+AND (
+  sqlc.narg('filter_description')::TEXT IS NULL
+  OR
+  description ILIKE sqlc.narg('filter_description')::TEXT
+)
+AND (
+  ARRAY_LENGTH(sqlc.arg('filter_tags')::TEXT[], 1) = 0
+  OR
+  tags && sqlc.arg('filter_tags')::TEXT[]
+);

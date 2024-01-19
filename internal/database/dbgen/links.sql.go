@@ -13,6 +13,17 @@ import (
 	"github.com/lib/pq"
 )
 
+const links_CountAll = `-- name: Links_CountAll :one
+SELECT COUNT(*) FROM links
+`
+
+func (q *Queries) Links_CountAll(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, links_CountAll)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const links_Create = `-- name: Links_Create :one
 INSERT INTO links (
     short_code,
@@ -257,6 +268,56 @@ func (q *Queries) Links_Paginate(ctx context.Context, arg Links_PaginateParams) 
 		return nil, err
 	}
 	return items, nil
+}
+
+const links_PaginateCountTotalMatches = `-- name: Links_PaginateCountTotalMatches :one
+SELECT COUNT(*) FROM links
+WHERE (
+  $1::BOOLEAN IS NULL
+  OR
+  is_active = $1::BOOLEAN
+)
+AND (
+  $2::TEXT IS NULL
+  OR
+  original_url ILIKE $2::TEXT
+)
+AND (
+  $3::TEXT IS NULL
+  OR
+  short_code ILIKE $3::TEXT
+)
+AND (
+  $4::TEXT IS NULL
+  OR
+  description ILIKE $4::TEXT
+)
+AND (
+  ARRAY_LENGTH($5::TEXT[], 1) = 0
+  OR
+  tags && $5::TEXT[]
+)
+`
+
+type Links_PaginateCountTotalMatchesParams struct {
+	FilterIsActive    sql.NullBool
+	FilterOriginalUrl sql.NullString
+	FilterShortCode   sql.NullString
+	FilterDescription sql.NullString
+	FilterTags        []string
+}
+
+func (q *Queries) Links_PaginateCountTotalMatches(ctx context.Context, arg Links_PaginateCountTotalMatchesParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, links_PaginateCountTotalMatches,
+		arg.FilterIsActive,
+		arg.FilterOriginalUrl,
+		arg.FilterShortCode,
+		arg.FilterDescription,
+		pq.Array(arg.FilterTags),
+	)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
 }
 
 const links_Update = `-- name: Links_Update :one
