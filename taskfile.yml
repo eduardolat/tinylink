@@ -20,6 +20,14 @@ tasks:
   tidy:
     cmd: go mod tidy
 
+  # This task will install the SQLC cli
+  sqlc:install:
+    cmd: go install github.com/sqlc-dev/sqlc/cmd/sqlc@v1.24.0
+
+  # This task will generate the database client using sqlc
+  sqlc:generate:
+    cmd: sqlc generate
+
   # Require database connection string in .env file
   # Example: task migrations:create -- name_of_migration
   migrations:create:
