@@ -1,6 +1,7 @@
 package web
 
 import (
+	"errors"
 	"net/http"
 	"time"
 
@@ -28,6 +29,9 @@ func (h *handlers) redirectHandler(c echo.Context) error {
 
 	// Retrieve the URL from the shortener service
 	link, err := h.shortener.GetByShortCode(shortCode)
+	if errors.Is(err, shortener.ErrLinkNotFound) {
+		return c.Redirect(http.StatusFound, "/404")
+	}
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
