@@ -58,7 +58,7 @@ import (
 	"os"
 
 	"github.com/eduardolat/tinylink/internal/config"
-	"github.com/eduardolat/tinylink/internal/db"
+	"github.com/eduardolat/tinylink/internal/database"
 	"github.com/eduardolat/tinylink/internal/logger"
 	"github.com/pressly/goose/v3"
 )
@@ -84,7 +84,7 @@ func main() {
 	}
 
 	env := config.GetEnv()
-	db, err := db.Connect(env)
+	db, err := database.Connect(env)
 	if err != nil {
 		logger.FatalError(
 			"could not connect to DB",
@@ -145,7 +145,7 @@ func createMigration(name string) error {
 		context.Background(),
 		"create",
 		nil,
-		"./internal/db/migrations",
+		"./internal/database/migrations",
 		name,
 		"sql",
 	)
@@ -156,7 +156,7 @@ func upMigration(db *sql.DB) error {
 		context.Background(),
 		"up",
 		db,
-		"./internal/db/migrations",
+		"./internal/database/migrations",
 	)
 }
 
@@ -165,7 +165,7 @@ func downMigration(db *sql.DB) error {
 		context.Background(),
 		"down",
 		db,
-		"./internal/db/migrations",
+		"./internal/database/migrations",
 	)
 }
 
@@ -174,6 +174,6 @@ func resetMigration(db *sql.DB) error {
 		context.Background(),
 		"reset",
 		db,
-		"./internal/db/migrations",
+		"./internal/database/migrations",
 	)
 }
