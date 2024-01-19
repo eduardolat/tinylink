@@ -1,18 +1,25 @@
 -- name: Links_CountAll :one
 SELECT COUNT(*) FROM links;
 
+-- name: Links_Exists :one
+SELECT EXISTS (
+  SELECT 1
+  FROM links
+  WHERE id = $1
+) AS exists;
+
 -- name: Links_ExistsByShortCode :one
 SELECT EXISTS (
-    SELECT 1
-    FROM links
-    WHERE short_code = $1
+  SELECT 1
+  FROM links
+  WHERE short_code = $1
 ) AS exists;
 
 -- name: Links_ExistsByOriginalURL :one
 SELECT EXISTS (
-    SELECT 1
-    FROM links
-    WHERE original_url = $1
+  SELECT 1
+  FROM links
+  WHERE original_url = $1
 ) AS exists;
 
 -- name: Links_Get :one

@@ -104,11 +104,26 @@ func (q *Queries) Links_Delete(ctx context.Context, id uuid.UUID) error {
 	return err
 }
 
+const links_Exists = `-- name: Links_Exists :one
+SELECT EXISTS (
+  SELECT 1
+  FROM links
+  WHERE id = $1
+) AS exists
+`
+
+func (q *Queries) Links_Exists(ctx context.Context, id uuid.UUID) (bool, error) {
+	row := q.db.QueryRowContext(ctx, links_Exists, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const links_ExistsByOriginalURL = `-- name: Links_ExistsByOriginalURL :one
 SELECT EXISTS (
-    SELECT 1
-    FROM links
-    WHERE original_url = $1
+  SELECT 1
+  FROM links
+  WHERE original_url = $1
 ) AS exists
 `
 
@@ -121,9 +136,9 @@ func (q *Queries) Links_ExistsByOriginalURL(ctx context.Context, originalUrl str
 
 const links_ExistsByShortCode = `-- name: Links_ExistsByShortCode :one
 SELECT EXISTS (
-    SELECT 1
-    FROM links
-    WHERE short_code = $1
+  SELECT 1
+  FROM links
+  WHERE short_code = $1
 ) AS exists
 `
 
