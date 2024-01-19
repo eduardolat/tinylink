@@ -9,7 +9,9 @@ tasks:
       - task serve
 
   build:
-    cmd: go build -o ./dist/tinylink ./cmd/tinylink/.
+    cmds:
+      - task sqlc:generate
+      - go build -o ./dist/tinylink ./cmd/tinylink/.
   
   serve:
     cmd: ./dist/tinylink
