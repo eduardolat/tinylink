@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/eduardolat/tinylink/internal/database/dbgen"
 	"github.com/eduardolat/tinylink/internal/echoutil"
 	"github.com/eduardolat/tinylink/internal/shortener"
 	"github.com/eduardolat/tinylink/internal/validatorutil"
@@ -13,8 +14,8 @@ import (
 
 type shortenRequest struct {
 	ShortCode         string   `json:"short_code"`
-	OriginalURL       string   `json:"original_url" validate:"required,url"`
-	HTTPRedirectCode  int      `json:"http_redirect_code"`
+	OriginalUrl       string   `json:"original_url" validate:"required,url"`
+	HttpRedirectCode  int      `json:"http_redirect_code"`
 	Description       string   `json:"description"`
 	Tags              []string `json:"tags"`
 	Password          string   `json:"password"`
@@ -26,7 +27,7 @@ type shortenRequest struct {
 func NewShortenRequest() *shortenRequest {
 	return &shortenRequest{
 		ShortCode:         "",
-		HTTPRedirectCode:  shortener.HTTPRedirectCodeTemporary,
+		HttpRedirectCode:  shortener.HTTPRedirectCodeTemporary,
 		Tags:              []string{},
 		Password:          "",
 		ExpiresAt:         "",
@@ -57,44 +58,46 @@ func (h *handlers) shortenHandler(c echo.Context) error {
 		}
 	}
 
-	shortCode, err := h.shortener.ShortenURL(shortener.StoreURLParams{
-		ShortCode:        req.ShortCode,
-		OriginalURL:      req.OriginalURL,
-		HTTPRedirectCode: req.HTTPRedirectCode,
-		Description: sql.NullString{
-			Valid:  req.Description != "",
-			String: req.Description,
+	link, err := h.shortener.ShortenURL(
+		dbgen.Links_CreateParams{
+			ShortCode:        req.ShortCode,
+			OriginalUrl:      req.OriginalUrl,
+			HttpRedirectCode: int32(req.HttpRedirectCode),
+			Description: sql.NullString{
+				Valid:  req.Description != "",
+				String: req.Description,
+			},
+			Tags: req.Tags,
+			Password: sql.NullString{
+				Valid:  req.Password != "",
+				String: req.Password,
+			},
+			ExpiresAt: sql.NullTime{
+				Valid: req.ExpiresAt != "",
+				Time:  parsedExpiresAt,
+			},
+			IsActive: req.IsActive,
+			CreatedByIp: sql.NullString{
+				Valid:  true,
+				String: c.RealIP(),
+			},
+			CreatedByUserAgent: sql.NullString{
+				Valid:  true,
+				String: c.Request().UserAgent(),
+			},
 		},
-		Tags: req.Tags,
-		Password: sql.NullString{
-			Valid:  req.Password != "",
-			String: req.Password,
-		},
-		ExpiresAt: sql.NullTime{
-			Valid: req.ExpiresAt != "",
-			Time:  parsedExpiresAt,
-		},
-		IsActive: req.IsActive,
-		CreatedByIP: sql.NullString{
-			Valid:  true,
-			String: c.RealIP(),
-		},
-		CreatedByUserAgent: sql.NullString{
-			Valid:  true,
-			String: c.Request().UserAgent(),
-		},
-		DuplicateIfExists: req.DuplicateIfExists,
-	})
+		req.DuplicateIfExists,
+	)
 	if err != nil {
 		return echoutil.JsonError(c, http.StatusInternalServerError, err)
 	}
 
-	shortURL := h.shortener.CreateShortURL(shortCode)
+	shortURL := h.shortener.CreateShortURL(link.ShortCode)
 
 	return c.JSON(
 		http.StatusOK,
 		map[string]string{
-			"short_code": shortCode,
+			"short_code": link.ShortCode,
 			"short_url":  shortURL,
 			"created_at": time.Now().Format(time.RFC3339),
 		},
