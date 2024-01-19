@@ -6,7 +6,8 @@ import (
 
 	"github.com/eduardolat/tinylink/internal/api"
 	"github.com/eduardolat/tinylink/internal/config"
-	"github.com/eduardolat/tinylink/internal/datastores/postgres"
+	"github.com/eduardolat/tinylink/internal/database"
+	"github.com/eduardolat/tinylink/internal/database/dbgen"
 	"github.com/eduardolat/tinylink/internal/logger"
 	"github.com/eduardolat/tinylink/internal/middleware"
 	"github.com/eduardolat/tinylink/internal/shortener"
@@ -20,26 +21,28 @@ func main() {
 	logger.Info("✂️  starting TinyLink")
 	env := config.GetEnv()
 
-	dataStore, err := postgres.NewDataStore(env)
+	db, err := database.Connect(env)
 	if err != nil {
 		logger.FatalError(
-			"failed to initialize data store",
+			"failed to connect to database",
 			"error",
 			err,
 		)
 	}
 
-	err = dataStore.AutoMigrate()
+	err = database.AutoMigrate(db)
 	if err != nil {
 		logger.FatalError(
-			"failed to auto migrate data store",
+			"failed to auto migrate database",
 			"error",
 			err,
 		)
 	}
+
+	dbg := dbgen.New(db)
 
 	shortGen := nanoid.NewShortGen()
-	shortenerClient := shortener.NewShortener(env, dataStore, shortGen)
+	shortenerClient := shortener.NewShortener(env, dbg, shortGen)
 	mid := middleware.NewMiddleware(env)
 
 	app := echo.New()
