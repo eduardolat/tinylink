@@ -46,7 +46,7 @@ AND (
 ORDER BY created_at DESC
 LIMIT $2 OFFSET $3;
 
--- name: Visits_PaginateForLinkCountTotalMatches :many
+-- name: Visits_PaginateForLinkCountTotalMatches :one
 SELECT COUNT(*) FROM visits
 WHERE link_id = $1
 AND (

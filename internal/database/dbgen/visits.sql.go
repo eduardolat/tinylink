@@ -163,7 +163,7 @@ func (q *Queries) Visits_PaginateForLink(ctx context.Context, arg Visits_Paginat
 	return items, nil
 }
 
-const visits_PaginateForLinkCountTotalMatches = `-- name: Visits_PaginateForLinkCountTotalMatches :many
+const visits_PaginateForLinkCountTotalMatches = `-- name: Visits_PaginateForLinkCountTotalMatches :one
 SELECT COUNT(*) FROM visits
 WHERE link_id = $1
 AND (
@@ -184,27 +184,11 @@ type Visits_PaginateForLinkCountTotalMatchesParams struct {
 	FilterIsRedirected sql.NullBool
 }
 
-func (q *Queries) Visits_PaginateForLinkCountTotalMatches(ctx context.Context, arg Visits_PaginateForLinkCountTotalMatchesParams) ([]int64, error) {
-	rows, err := q.db.QueryContext(ctx, visits_PaginateForLinkCountTotalMatches, arg.LinkID, arg.FilterIp, arg.FilterIsRedirected)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []int64
-	for rows.Next() {
-		var count int64
-		if err := rows.Scan(&count); err != nil {
-			return nil, err
-		}
-		items = append(items, count)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
+func (q *Queries) Visits_PaginateForLinkCountTotalMatches(ctx context.Context, arg Visits_PaginateForLinkCountTotalMatchesParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, visits_PaginateForLinkCountTotalMatches, arg.LinkID, arg.FilterIp, arg.FilterIsRedirected)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
 }
 
 const visits_SetIsRedirected = `-- name: Visits_SetIsRedirected :one
