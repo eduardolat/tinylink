@@ -58,7 +58,7 @@ func (h *handlers) shortenHandler(c echo.Context) error {
 		}
 	}
 
-	link, err := h.shortener.ShortenURL(
+	link, err := h.shortener.Shorten(
 		dbgen.Links_CreateParams{
 			ShortCode:        req.ShortCode,
 			OriginalUrl:      req.OriginalUrl,
@@ -92,7 +92,7 @@ func (h *handlers) shortenHandler(c echo.Context) error {
 		return echoutil.JsonError(c, http.StatusInternalServerError, err)
 	}
 
-	shortURL := h.shortener.CreateShortURL(link.ShortCode)
+	shortURL := h.shortener.CreateShortLinkFromCode(link.ShortCode)
 
 	return c.JSON(
 		http.StatusOK,

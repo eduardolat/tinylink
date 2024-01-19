@@ -30,38 +30,38 @@ func (h *handlers) retrieveHandler(c echo.Context) error {
 		return echoutil.JsonError(c, http.StatusBadRequest, errors.New("short code is required"))
 	}
 
-	url, err := h.shortener.GetByShortCode(shortCode)
+	link, err := h.shortener.GetByShortCode(shortCode)
 	if err != nil {
 		return echoutil.JsonError(c, http.StatusInternalServerError, err)
 	}
 
-	shortUrl := h.shortener.CreateShortURL(url.ShortCode)
+	shortUrl := h.shortener.CreateShortLinkFromCode(link.ShortCode)
 
 	response := retrieveResponse{
 		ShortURL:         shortUrl,
-		IsActive:         url.IsActive,
-		Tags:             url.Tags,
-		HTTPRedirectCode: int(url.HttpRedirectCode),
-		OriginalURL:      url.OriginalUrl,
-		ShortCode:        url.ShortCode,
-		CreatedAt:        url.CreatedAt,
-		UpdatedAt:        url.UpdatedAt,
+		IsActive:         link.IsActive,
+		Tags:             link.Tags,
+		HTTPRedirectCode: int(link.HttpRedirectCode),
+		OriginalURL:      link.OriginalUrl,
+		ShortCode:        link.ShortCode,
+		CreatedAt:        link.CreatedAt,
+		UpdatedAt:        link.UpdatedAt,
 	}
 
-	if url.Description.Valid {
-		response.Description = &url.Description.String
+	if link.Description.Valid {
+		response.Description = &link.Description.String
 	}
 
-	if url.ExpiresAt.Valid {
-		response.ExpiresAt = &url.ExpiresAt.Time
+	if link.ExpiresAt.Valid {
+		response.ExpiresAt = &link.ExpiresAt.Time
 	}
 
-	if url.CreatedByIp.Valid {
-		response.CreatedByIP = &url.CreatedByIp.String
+	if link.CreatedByIp.Valid {
+		response.CreatedByIP = &link.CreatedByIp.String
 	}
 
-	if url.CreatedByUserAgent.Valid {
-		response.CreatedByUserAgent = &url.CreatedByUserAgent.String
+	if link.CreatedByUserAgent.Valid {
+		response.CreatedByUserAgent = &link.CreatedByUserAgent.String
 	}
 
 	return c.JSON(http.StatusOK, response)
