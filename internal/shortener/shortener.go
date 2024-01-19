@@ -17,6 +17,8 @@ var (
 	// ErrCannotUseDuplicateIfExists is the error returned when the user tries to
 	// use duplicateIfExists when providing a short code
 	ErrCannotUseDuplicateIfExists = errors.New("cannot use duplicate if exists when providing a predefined short code")
+	// ErrLinkNotFound is the error returned when the link is not found
+	ErrLinkNotFound = errors.New("link not found")
 )
 
 type Shortener struct {
@@ -194,6 +196,17 @@ func (c *Shortener) Paginate(params PaginateParams) (PaginateResponse, error) {
 // Get is the function that will be used to retrieve a URL
 // that was previously shortened
 func (c *Shortener) Get(id uuid.UUID) (dbgen.Link, error) {
+	exists, err := c.dbg.Links_Exists(
+		context.Background(),
+		id,
+	)
+	if err != nil {
+		return dbgen.Link{}, err
+	}
+	if !exists {
+		return dbgen.Link{}, ErrLinkNotFound
+	}
+
 	link, err := c.dbg.Links_Get(
 		context.Background(),
 		id,
@@ -204,6 +217,17 @@ func (c *Shortener) Get(id uuid.UUID) (dbgen.Link, error) {
 // GetByShortCode is the function that will be used to retrieve a URL
 // that was previously shortened by its short code
 func (c *Shortener) GetByShortCode(shortCode string) (dbgen.Link, error) {
+	exists, err := c.dbg.Links_ExistsByShortCode(
+		context.Background(),
+		shortCode,
+	)
+	if err != nil {
+		return dbgen.Link{}, err
+	}
+	if !exists {
+		return dbgen.Link{}, ErrLinkNotFound
+	}
+
 	link, err := c.dbg.Links_GetByShortCode(
 		context.Background(),
 		shortCode,
@@ -214,11 +238,52 @@ func (c *Shortener) GetByShortCode(shortCode string) (dbgen.Link, error) {
 // GetByOriginalURL is the function that will be used to retrieve a URL
 // that was previously shortened by its original URL
 func (c *Shortener) GetByOriginalURL(originalURL string) (dbgen.Link, error) {
+	exists, err := c.dbg.Links_ExistsByOriginalURL(
+		context.Background(),
+		originalURL,
+	)
+	if err != nil {
+		return dbgen.Link{}, err
+	}
+	if !exists {
+		return dbgen.Link{}, ErrLinkNotFound
+	}
+
 	link, err := c.dbg.Links_GetByOriginalURL(
 		context.Background(),
 		originalURL,
 	)
 	return link, err
+}
+
+// Exists is the function that will be used to check if a URL
+// that was previously shortened exists
+func (c *Shortener) Exists(id uuid.UUID) (bool, error) {
+	exists, err := c.dbg.Links_Exists(
+		context.Background(),
+		id,
+	)
+	return exists, err
+}
+
+// ExistsByShortCode is the function that will be used to check if a URL
+// that was previously shortened exists by its short code
+func (c *Shortener) ExistsByShortCode(shortCode string) (bool, error) {
+	exists, err := c.dbg.Links_ExistsByShortCode(
+		context.Background(),
+		shortCode,
+	)
+	return exists, err
+}
+
+// ExistsByOriginalURL is the function that will be used to check if a URL
+// that was previously shortened exists by its original URL
+func (c *Shortener) ExistsByOriginalURL(originalURL string) (bool, error) {
+	exists, err := c.dbg.Links_ExistsByOriginalURL(
+		context.Background(),
+		originalURL,
+	)
+	return exists, err
 }
 
 // Update is the function that will be used to update a URL
