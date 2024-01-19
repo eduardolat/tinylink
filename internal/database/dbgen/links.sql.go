@@ -134,6 +134,31 @@ func (q *Queries) Links_ExistsByShortCode(ctx context.Context, shortCode string)
 	return exists, err
 }
 
+const links_Get = `-- name: Links_Get :one
+SELECT id, short_code, original_url, http_redirect_code, is_active, description, tags, password, expires_at, created_by_ip, created_by_user_agent, created_at, updated_at FROM links WHERE id = $1
+`
+
+func (q *Queries) Links_Get(ctx context.Context, id uuid.UUID) (Link, error) {
+	row := q.db.QueryRowContext(ctx, links_Get, id)
+	var i Link
+	err := row.Scan(
+		&i.ID,
+		&i.ShortCode,
+		&i.OriginalUrl,
+		&i.HttpRedirectCode,
+		&i.IsActive,
+		&i.Description,
+		pq.Array(&i.Tags),
+		&i.Password,
+		&i.ExpiresAt,
+		&i.CreatedByIp,
+		&i.CreatedByUserAgent,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const links_GetByOriginalURL = `-- name: Links_GetByOriginalURL :one
 SELECT id, short_code, original_url, http_redirect_code, is_active, description, tags, password, expires_at, created_by_ip, created_by_user_agent, created_at, updated_at FROM links WHERE original_url = $1
 `

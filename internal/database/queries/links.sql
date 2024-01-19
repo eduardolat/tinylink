@@ -15,6 +15,9 @@ SELECT EXISTS (
     WHERE original_url = $1
 ) AS exists;
 
+-- name: Links_Get :one
+SELECT * FROM links WHERE id = $1;
+
 -- name: Links_GetByShortCode :one
 SELECT * FROM links WHERE short_code = $1;
 
