@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/eduardolat/tinylink/internal/echoutil"
+	"github.com/eduardolat/tinylink/internal/hashutil"
 	"github.com/eduardolat/tinylink/internal/shortener"
 	"github.com/eduardolat/tinylink/internal/web/layouts"
 	"github.com/labstack/echo/v4"
@@ -14,7 +15,6 @@ import (
 )
 
 // TODO: Insert the visits and mark the link as visited
-// TODO: Hash the password before storing it in the database and before comparing
 
 func (h *handlers) redirectHandler(c echo.Context) error {
 	// The short code is the last part of the URL
@@ -47,10 +47,19 @@ func (h *handlers) redirectHandler(c echo.Context) error {
 	// If the link is password protected, check if the password
 	// is provided and correct. Otherwise, show the password
 	// required page.
-	if link.Password.Valid && link.Password.String != password {
-		showPasswordError := password != ""
-		page := redirectPasswordPage(shortCode, showPasswordError)
-		return echoutil.RenderGomponent(c, http.StatusOK, page)
+	if link.Password.Valid && link.Password.String != "" {
+		passwordMatch := false
+		passwordProvided := password != ""
+
+		if passwordProvided {
+			passwordMatch = hashutil.CompareHashAndPassword(link.Password.String, password)
+		}
+
+		if !passwordMatch {
+			showPasswordError := passwordProvided
+			page := redirectPasswordPage(shortCode, showPasswordError)
+			return echoutil.RenderGomponent(c, http.StatusOK, page)
+		}
 	}
 
 	redirectCode := shortener.HTTPRedirectCodeTemporary
