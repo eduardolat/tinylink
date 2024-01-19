@@ -11,10 +11,14 @@ CREATE TABLE IF NOT EXISTS visits (
 );
 
 CREATE INDEX IF NOT EXISTS visits_link_id_idx ON visits (link_id);
+CREATE INDEX IF NOT EXISTS visits_ip_idx ON visits (ip);
+CREATE INDEX IF NOT EXISTS visits_is_redirected_idx ON visits (is_redirected);
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
 DROP INDEX IF EXISTS visits_link_id_idx;
+DROP INDEX IF EXISTS visits_ip_idx;
+DROP INDEX IF EXISTS visits_is_redirected_idx;
 DROP TABLE IF EXISTS visits;
 -- +goose StatementEnd
