@@ -73,14 +73,14 @@ func (c *Shortener) Shorten(
 	// When the user provides a short code, we need to check if it's available.
 	// We should not generate a random short code if the user provided one.
 	if params.ShortCode != "" {
-		isAvailable, err := c.dbg.Links_ExistsByShortCode(
+		alreadyExists, err := c.dbg.Links_ExistsByShortCode(
 			context.Background(),
 			params.ShortCode,
 		)
 		if err != nil {
 			return dbgen.Link{}, err
 		}
-		if !isAvailable {
+		if alreadyExists {
 			return dbgen.Link{}, ErrShortCodeNotAvailable
 		}
 	}
@@ -97,7 +97,7 @@ func (c *Shortener) Shorten(
 				return dbgen.Link{}, err
 			}
 
-			isAvailable, err := c.dbg.Links_ExistsByShortCode(
+			alreadyExists, err := c.dbg.Links_ExistsByShortCode(
 				context.Background(),
 				sc,
 			)
@@ -105,7 +105,7 @@ func (c *Shortener) Shorten(
 				return dbgen.Link{}, err
 			}
 
-			if isAvailable {
+			if !alreadyExists {
 				params.ShortCode = sc
 				break
 			}
