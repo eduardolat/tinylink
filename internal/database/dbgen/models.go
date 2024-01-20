@@ -15,7 +15,7 @@ type Link struct {
 	ID                 uuid.UUID
 	ShortCode          string
 	OriginalUrl        string
-	HttpRedirectCode   int32
+	HttpRedirectCode   int16
 	IsActive           bool
 	Description        sql.NullString
 	Tags               []string

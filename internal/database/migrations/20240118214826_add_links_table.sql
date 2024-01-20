@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS links (
   id UUID NOT NULL DEFAULT uuid_generate_v4() PRIMARY KEY,
   short_code TEXT NOT NULL,
   original_url TEXT NOT NULL,
-  http_redirect_code INTEGER NOT NULL,
+  http_redirect_code SMALLINT NOT NULL,
   is_active BOOLEAN NOT NULL,
   description TEXT,
   tags TEXT[],
