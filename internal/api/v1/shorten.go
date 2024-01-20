@@ -16,15 +16,15 @@ type shortenRequest struct {
 	ShortCode         string   `json:"short_code"`
 	OriginalUrl       string   `json:"original_url" validate:"required,url"`
 	HttpRedirectCode  int      `json:"http_redirect_code"`
+	IsActive          bool     `json:"is_active"`
 	Description       string   `json:"description"`
 	Tags              []string `json:"tags"`
 	Password          string   `json:"password"`
 	ExpiresAt         string   `json:"expires_at" validate:"omitempty,datetime"`
-	IsActive          bool     `json:"is_active"`
 	DuplicateIfExists bool     `json:"duplicate_if_exists"`
 }
 
-func NewShortenRequest() *shortenRequest {
+func newShortenRequest() *shortenRequest {
 	return &shortenRequest{
 		ShortCode:         "",
 		HttpRedirectCode:  shortener.HTTPRedirectCodeTemporary,
@@ -44,7 +44,7 @@ func (s *shortenRequest) BindAndValidate(c echo.Context) error {
 }
 
 func (h *handlers) shortenHandler(c echo.Context) error {
-	req := NewShortenRequest()
+	req := newShortenRequest()
 	if err := req.BindAndValidate(c); err != nil {
 		return echoutil.JsonError(c, http.StatusBadRequest, err)
 	}
@@ -62,7 +62,7 @@ func (h *handlers) shortenHandler(c echo.Context) error {
 		dbgen.Links_CreateParams{
 			ShortCode:        req.ShortCode,
 			OriginalUrl:      req.OriginalUrl,
-			HttpRedirectCode: int32(req.HttpRedirectCode),
+			HttpRedirectCode: int16(req.HttpRedirectCode),
 			Description: sql.NullString{
 				Valid:  req.Description != "",
 				String: req.Description,
@@ -92,14 +92,8 @@ func (h *handlers) shortenHandler(c echo.Context) error {
 		return echoutil.JsonError(c, http.StatusInternalServerError, err)
 	}
 
-	shortURL := h.shortener.CreateShortLinkFromCode(link.ShortCode)
-
 	return c.JSON(
 		http.StatusOK,
-		map[string]string{
-			"short_code": link.ShortCode,
-			"short_url":  shortURL,
-			"created_at": time.Now().Format(time.RFC3339),
-		},
+		h.linkToJSON(link),
 	)
 }
