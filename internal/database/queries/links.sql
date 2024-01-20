@@ -58,14 +58,14 @@ INSERT INTO links (
 
 -- name: Links_Update :one
 UPDATE links SET
-  short_code = COALESCE($2, short_code),
-  original_url = COALESCE($3, original_url),
-  http_redirect_code = COALESCE($4, http_redirect_code),
-  is_active = COALESCE($5, is_active),
-  description = COALESCE($6, description),
-  tags = COALESCE($7, tags),
-  password = COALESCE($8, password),
-  expires_at = COALESCE($9, expires_at),
+  short_code = COALESCE(sqlc.narg('short_code')::TEXT, short_code),
+  original_url = COALESCE(sqlc.narg('original_url')::TEXT, original_url),
+  http_redirect_code = COALESCE(sqlc.narg('http_redirect_code')::SMALLINT, http_redirect_code),
+  is_active = COALESCE(sqlc.narg('is_active')::BOOLEAN, is_active),
+  description = COALESCE(sqlc.narg('description')::TEXT, description),
+  tags = COALESCE(sqlc.narg('tags')::TEXT[], tags),
+  password = COALESCE(sqlc.narg('password')::TEXT, password),
+  expires_at = COALESCE(sqlc.narg('expires_at')::TIMESTAMPTZ, expires_at),
   updated_at = NOW()
 WHERE id = $1 RETURNING *;
 

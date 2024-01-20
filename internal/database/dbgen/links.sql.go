@@ -53,7 +53,7 @@ INSERT INTO links (
 type Links_CreateParams struct {
 	ShortCode          string
 	OriginalUrl        string
-	HttpRedirectCode   int32
+	HttpRedirectCode   int16
 	IsActive           bool
 	Description        sql.NullString
 	Tags               []string
@@ -362,24 +362,24 @@ func (q *Queries) Links_PaginateCountTotalMatches(ctx context.Context, arg Links
 
 const links_Update = `-- name: Links_Update :one
 UPDATE links SET
-  short_code = COALESCE($2, short_code),
-  original_url = COALESCE($3, original_url),
-  http_redirect_code = COALESCE($4, http_redirect_code),
-  is_active = COALESCE($5, is_active),
-  description = COALESCE($6, description),
-  tags = COALESCE($7, tags),
-  password = COALESCE($8, password),
-  expires_at = COALESCE($9, expires_at),
+  short_code = COALESCE($2::TEXT, short_code),
+  original_url = COALESCE($3::TEXT, original_url),
+  http_redirect_code = COALESCE($4::SMALLINT, http_redirect_code),
+  is_active = COALESCE($5::BOOLEAN, is_active),
+  description = COALESCE($6::TEXT, description),
+  tags = COALESCE($7::TEXT[], tags),
+  password = COALESCE($8::TEXT, password),
+  expires_at = COALESCE($9::TIMESTAMPTZ, expires_at),
   updated_at = NOW()
 WHERE id = $1 RETURNING id, short_code, original_url, http_redirect_code, is_active, description, tags, password, expires_at, created_by_ip, created_by_user_agent, created_at, updated_at
 `
 
 type Links_UpdateParams struct {
 	ID               uuid.UUID
-	ShortCode        string
-	OriginalUrl      string
-	HttpRedirectCode int32
-	IsActive         bool
+	ShortCode        sql.NullString
+	OriginalUrl      sql.NullString
+	HttpRedirectCode sql.NullInt16
+	IsActive         sql.NullBool
 	Description      sql.NullString
 	Tags             []string
 	Password         sql.NullString
