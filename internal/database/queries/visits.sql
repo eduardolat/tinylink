@@ -36,7 +36,7 @@ WHERE link_id = $1
 AND (
   sqlc.narg('filter_ip')::TEXT IS NULL
   OR
-  ip ILIKE sqlc.narg('filter_ip')::TEXT
+  ip ILIKE CONCAT('%', sqlc.narg('filter_ip')::TEXT, '%')
 )
 AND (
   sqlc.narg('filter_is_redirected')::BOOLEAN IS NULL
@@ -52,7 +52,7 @@ WHERE link_id = $1
 AND (
   sqlc.narg('filter_ip')::TEXT IS NULL
   OR
-  ip ILIKE sqlc.narg('filter_ip')::TEXT
+  ip ILIKE CONCAT('%', sqlc.narg('filter_ip')::TEXT, '%')
 )
 AND (
   sqlc.narg('filter_is_redirected')::BOOLEAN IS NULL

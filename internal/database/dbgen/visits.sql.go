@@ -107,7 +107,7 @@ WHERE link_id = $1
 AND (
   $4::TEXT IS NULL
   OR
-  ip ILIKE $4::TEXT
+  ip ILIKE CONCAT('%', $4::TEXT, '%')
 )
 AND (
   $5::BOOLEAN IS NULL
@@ -169,7 +169,7 @@ WHERE link_id = $1
 AND (
   $2::TEXT IS NULL
   OR
-  ip ILIKE $2::TEXT
+  ip ILIKE CONCAT('%', $2::TEXT, '%')
 )
 AND (
   $3::BOOLEAN IS NULL

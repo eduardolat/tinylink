@@ -82,20 +82,20 @@ WHERE (
 AND (
   sqlc.narg('filter_original_url')::TEXT IS NULL
   OR
-  original_url ILIKE sqlc.narg('filter_original_url')::TEXT
+  original_url ILIKE CONCAT('%', sqlc.narg('filter_original_url')::TEXT, '%')
 )
 AND (
   sqlc.narg('filter_short_code')::TEXT IS NULL
   OR
-  short_code ILIKE sqlc.narg('filter_short_code')::TEXT
+  short_code ILIKE CONCAT('%', sqlc.narg('filter_short_code')::TEXT, '%')
 )
 AND (
   sqlc.narg('filter_description')::TEXT IS NULL
   OR
-  description ILIKE sqlc.narg('filter_description')::TEXT
+  description ILIKE CONCAT('%', sqlc.narg('filter_description')::TEXT, '%')
 )
 AND (
-  ARRAY_LENGTH(sqlc.arg('filter_tags')::TEXT[], 1) = 0
+  (SELECT COUNT(*) FROM unnest(sqlc.arg('filter_tags')::TEXT[]) AS tag) = 0
   OR
   tags && sqlc.arg('filter_tags')::TEXT[]
 )
@@ -112,20 +112,20 @@ WHERE (
 AND (
   sqlc.narg('filter_original_url')::TEXT IS NULL
   OR
-  original_url ILIKE sqlc.narg('filter_original_url')::TEXT
+  original_url ILIKE CONCAT('%', sqlc.narg('filter_original_url')::TEXT, '%')
 )
 AND (
   sqlc.narg('filter_short_code')::TEXT IS NULL
   OR
-  short_code ILIKE sqlc.narg('filter_short_code')::TEXT
+  short_code ILIKE CONCAT('%', sqlc.narg('filter_short_code')::TEXT, '%')
 )
 AND (
   sqlc.narg('filter_description')::TEXT IS NULL
   OR
-  description ILIKE sqlc.narg('filter_description')::TEXT
+  description ILIKE CONCAT('%', sqlc.narg('filter_description')::TEXT, '%')
 )
 AND (
-  ARRAY_LENGTH(sqlc.arg('filter_tags')::TEXT[], 1) = 0
+  (SELECT COUNT(*) FROM unnest(sqlc.arg('filter_tags')::TEXT[]) AS tag) = 0
   OR
   tags && sqlc.arg('filter_tags')::TEXT[]
 );

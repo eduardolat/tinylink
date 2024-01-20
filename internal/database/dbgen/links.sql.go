@@ -234,20 +234,20 @@ WHERE (
 AND (
   $4::TEXT IS NULL
   OR
-  original_url ILIKE $4::TEXT
+  original_url ILIKE CONCAT('%', $4::TEXT, '%')
 )
 AND (
   $5::TEXT IS NULL
   OR
-  short_code ILIKE $5::TEXT
+  short_code ILIKE CONCAT('%', $5::TEXT, '%')
 )
 AND (
   $6::TEXT IS NULL
   OR
-  description ILIKE $6::TEXT
+  description ILIKE CONCAT('%', $6::TEXT, '%')
 )
 AND (
-  ARRAY_LENGTH($7::TEXT[], 1) = 0
+  (SELECT COUNT(*) FROM unnest($7::TEXT[]) AS tag) = 0
   OR
   tags && $7::TEXT[]
 )
@@ -320,20 +320,20 @@ WHERE (
 AND (
   $2::TEXT IS NULL
   OR
-  original_url ILIKE $2::TEXT
+  original_url ILIKE CONCAT('%', $2::TEXT, '%')
 )
 AND (
   $3::TEXT IS NULL
   OR
-  short_code ILIKE $3::TEXT
+  short_code ILIKE CONCAT('%', $3::TEXT, '%')
 )
 AND (
   $4::TEXT IS NULL
   OR
-  description ILIKE $4::TEXT
+  description ILIKE CONCAT('%', $4::TEXT, '%')
 )
 AND (
-  ARRAY_LENGTH($5::TEXT[], 1) = 0
+  (SELECT COUNT(*) FROM unnest($5::TEXT[]) AS tag) = 0
   OR
   tags && $5::TEXT[]
 )
