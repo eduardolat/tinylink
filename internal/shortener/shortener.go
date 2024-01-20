@@ -302,9 +302,24 @@ func (c *Shortener) ExistsByOriginalURL(originalURL string) (bool, error) {
 }
 
 // Update is the function that will be used to update a URL
-// that was previously shortened
+// that was previously shortened.
+//
+// If password is provided, it will be hashed before being stored
 func (c *Shortener) Update(id uuid.UUID, params dbgen.Links_UpdateParams) (dbgen.Link, error) {
 	params.ID = id
+
+	// Hash password if provided before storing it
+	if params.Password.Valid && params.Password.String != "" {
+		hashedPassword, err := hashutil.GenerateHashFromPassword(params.Password.String)
+		if err != nil {
+			return dbgen.Link{}, fmt.Errorf("failed to hash password: %w", err)
+		}
+		params.Password = sql.NullString{
+			Valid:  true,
+			String: hashedPassword,
+		}
+	}
+
 	link, err := c.dbg.Links_Update(
 		context.Background(),
 		params,
