@@ -9,11 +9,11 @@ CREATE TABLE IF NOT EXISTS links (
   description TEXT,
   tags TEXT[],
   password TEXT,
-  expires_at TIMESTAMP,
+  expires_at TIMESTAMPTZ,
   created_by_ip TEXT,
   created_by_user_agent TEXT,
-  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 ALTER TABLE links ADD CONSTRAINT links_short_code_unique UNIQUE (short_code);

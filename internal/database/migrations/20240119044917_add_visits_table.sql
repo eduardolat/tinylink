@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS visits (
   user_agent TEXT NOT NULL,
   referer TEXT,
   is_redirected BOOLEAN NOT NULL DEFAULT FALSE,
-  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS visits_link_id_idx ON visits (link_id);
