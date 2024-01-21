@@ -48,7 +48,7 @@ func (h *handlers) indexPage(linksCount int64) gomponents.Node {
 						gomponents.Text("Original link"),
 					),
 					html.Th(
-						gomponents.Text("HTTP Redirect code"),
+						gomponents.Text("Redirect code"),
 					),
 					html.Th(
 						gomponents.Text("Password?"),
