@@ -9,6 +9,7 @@ require (
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/lib/pq v1.10.9
 	github.com/maragudk/gomponents v0.20.1
+	github.com/maragudk/gomponents-heroicons/v2 v2.0.0
 	github.com/matoous/go-nanoid/v2 v2.0.0
 	github.com/pressly/goose/v3 v3.17.0
 	github.com/stretchr/testify v1.8.4
