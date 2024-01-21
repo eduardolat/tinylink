@@ -20,6 +20,12 @@ func Admin(title string, children []gomponents.Node) gomponents.Node {
 				html.Rel("stylesheet"),
 				html.Href("https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css"),
 			),
+			html.Script(
+				html.Src("https://cdn.jsdelivr.net/npm/@unocss/runtime@0.58.3/uno.global.min.js"),
+			),
+			html.Script(
+				html.Src("https://cdn.jsdelivr.net/npm/htmx.org@1.9.10/dist/htmx.min.js"),
+			),
 		},
 		Body: []gomponents.Node{
 			html.Nav(
