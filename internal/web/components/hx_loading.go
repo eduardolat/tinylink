@@ -7,6 +7,8 @@ import (
 
 // LoadingProps are the props for the loading indicator.
 type LoadingProps struct {
+	// ID is the HTML ID of the loading indicator.
+	ID string
 	// Center indicates whether the loading indicator should be centered.
 	Center bool
 	// Size is the size of the loading indicator. Can be "sm" "md" (the default) or "lg".
@@ -20,6 +22,10 @@ func Loading(props LoadingProps) gomponents.Node {
 	}
 
 	return html.Div(
+		gomponents.If(
+			props.ID != "",
+			html.ID(props.ID),
+		),
 		Classes{
 			"htmx-indicator": true,
 			"w-full h-full flex justify-center items-center": props.Center,
