@@ -2,7 +2,6 @@ package components
 
 import (
 	"github.com/maragudk/gomponents"
-	gcomponents "github.com/maragudk/gomponents/components"
 	"github.com/maragudk/gomponents/html"
 )
 
@@ -21,12 +20,12 @@ func Loading(props LoadingProps) gomponents.Node {
 	}
 
 	return html.Div(
-		gcomponents.Classes{
+		Classes{
 			"htmx-indicator": true,
 			"w-full h-full flex justify-center items-center": props.Center,
 		},
 		html.Div(
-			gcomponents.Classes{
+			Classes{
 				"border-solid border-gray-500 border-t-transparent animate-spin rounded-full": true,
 
 				"w-[15px] h-[15px]": props.Size == "sm",
