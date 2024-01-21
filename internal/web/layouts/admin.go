@@ -28,8 +28,11 @@ func Admin(title string, children []gomponents.Node) gomponents.Node {
 			),
 
 			themeDetectorScript(),
+			unoCSSUnCloak(),
 		},
 		Body: []gomponents.Node{
+			gomponents.Attr("un-cloak"),
+
 			html.Nav(
 				html.Class("container"),
 				html.Ul(
@@ -81,6 +84,16 @@ func Admin(title string, children []gomponents.Node) gomponents.Node {
 			),
 		},
 	})
+}
+
+func unoCSSUnCloak() gomponents.Node {
+	return gomponents.Raw(`
+		<style>
+			[un-cloak] {
+				display: none;
+			}
+		</style>
+	`)
 }
 
 func themeDetectorScript() gomponents.Node {
