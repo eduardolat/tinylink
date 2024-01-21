@@ -72,7 +72,7 @@ func (h *handlers) linksPaginateHandler(c echo.Context) error {
 func (h *handlers) linksPaginatePage(
 	pagination shortener.PaginateResponse,
 ) gomponents.Node {
-	nextPageLink := fmt.Sprintf("/admin/links/paginate?page=%v", pagination.NextPage)
+	nextPageLink := fmt.Sprintf("/admin/links?page=%v", pagination.NextPage)
 
 	nextPageLoader := gomponents.Group([]gomponents.Node{
 		htmx.HxGet(nextPageLink),
