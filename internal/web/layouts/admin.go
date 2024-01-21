@@ -53,6 +53,9 @@ func Admin(title string, children []gomponents.Node) gomponents.Node {
 								"setAndStoreTheme(this.value)",
 							),
 
+							html.ID("theme-picker"),
+							html.Name("theme-picker"),
+
 							html.Option(
 								html.Value(""),
 								html.Selected(),
