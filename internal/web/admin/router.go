@@ -15,4 +15,5 @@ func MountRouter(
 	handlers := newHandlers(shortener)
 
 	group.GET("", handlers.indexHandler)
+	group.GET("/links/paginate", handlers.linksPaginateHandler)
 }
