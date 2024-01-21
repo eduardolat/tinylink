@@ -26,6 +26,8 @@ func Admin(title string, children []gomponents.Node) gomponents.Node {
 			html.Script(
 				html.Src("https://cdn.jsdelivr.net/npm/htmx.org@1.9.10/dist/htmx.min.js"),
 			),
+
+			themeDetectorScript(),
 		},
 		Body: []gomponents.Node{
 			html.Nav(
@@ -43,6 +45,31 @@ func Admin(title string, children []gomponents.Node) gomponents.Node {
 						),
 					),
 				),
+				html.Ul(
+					html.Li(
+						html.Select(
+							gomponents.Attr(
+								"onChange",
+								"setAndStoreTheme(this.value)",
+							),
+
+							html.Option(
+								html.Value(""),
+								html.Selected(),
+								html.Disabled(),
+								gomponents.Text("Change theme"),
+							),
+							html.Option(
+								html.Value("light"),
+								gomponents.Text("Light"),
+							),
+							html.Option(
+								html.Value("dark"),
+								gomponents.Text("Dark"),
+							),
+						),
+					),
+				),
 			),
 
 			html.Main(
@@ -51,4 +78,32 @@ func Admin(title string, children []gomponents.Node) gomponents.Node {
 			),
 		},
 	})
+}
+
+func themeDetectorScript() gomponents.Node {
+	return gomponents.Raw(`
+		<script>
+			let mode = "light"
+			if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+				mode = "dark"
+			}
+
+			function isThemeValid(theme) {
+				return theme === "light" || theme === "dark"
+			}
+
+			function setTheme(newMode) {
+				if (!isThemeValid(newMode)) return;
+				document.documentElement.setAttribute('data-theme', newMode)
+			}
+
+			function setAndStoreTheme(newMode) {
+				if (!isThemeValid(newMode)) return;
+				setTheme(newMode)
+				localStorage.theme = newMode
+			}
+
+			setTheme(mode)
+		</script>
+	`)
 }
