@@ -41,6 +41,15 @@ func NewShortener(
 	}
 }
 
+// CountAll is the function that will be used to count all the URLs
+// that were previously shortened
+func (c *Shortener) CountAll() (int64, error) {
+	count, err := c.dbg.Links_CountAll(
+		context.Background(),
+	)
+	return count, err
+}
+
 // Shorten is the function that will be used to shorten a URL.
 // If password is provided, it will be hashed before being stored
 func (c *Shortener) Shorten(
