@@ -5,8 +5,8 @@ import (
 	"github.com/maragudk/gomponents/html"
 )
 
-// LoadingProps are the props for the loading indicator.
-type LoadingProps struct {
+// HxLoadingProps are the props for the loading indicator.
+type HxLoadingProps struct {
 	// ID is the HTML ID of the loading indicator.
 	ID string
 	// Center indicates whether the loading indicator should be centered.
@@ -15,8 +15,8 @@ type LoadingProps struct {
 	Size string
 }
 
-// Loading returns a loading indicator.
-func Loading(props LoadingProps) gomponents.Node {
+// HxLoading returns a loading indicator.
+func HxLoading(props HxLoadingProps) gomponents.Node {
 	if props.Size == "" {
 		props.Size = "md"
 	}
